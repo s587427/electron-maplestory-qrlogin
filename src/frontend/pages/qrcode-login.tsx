@@ -1,0 +1,88 @@
+import { useEffect, useState } from "react"
+import { useNavigate } from "react-router"
+import { GetAccountsResult, ServiceAccount } from "src/backend/services/account"
+
+export function QRCodeLoingPage() {
+  const navigate = useNavigate()
+
+  const [imgSrc, setImgSrc] = useState(undefined)
+  const [qrcodeStatusState, setQRCodeStatusState] = useState<Number>(-1)
+  const [accountList, setAccountList] = useState<GetAccountsResult>(null)
+
+  useEffect(() => {
+    let checkQRCodeTimer: NodeJS.Timeout
+
+    window.api
+      .getQRCode()
+      .then((response) => {
+        // console.log(buffer)
+
+        const blob = new Blob([response.data], { type: "image/png" })
+        const imageUrl = URL.createObjectURL(blob)
+        setImgSrc(imageUrl)
+
+        // start check login status
+        checkQRCodeTimer = checkQRCodeLoginStatusTimer()
+      })
+      .catch((err) => console.log(err))
+
+    return () => {
+      clearTimeout(checkQRCodeTimer)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (qrcodeStatusState === 1) {
+      qrcodeLogin()
+    }
+  }, [qrcodeStatusState])
+
+  function checkQRCodeLoginStatusTimer() {
+    let timer: null | NodeJS.Timeout = null
+    async function executeTimer() {
+      const { data: qrcodeStatus } = await window.api.getQRCodeStatus()
+      setQRCodeStatusState(qrcodeStatus)
+      console.log("qrcodeStatus: ", qrcodeStatus)
+      timer = setTimeout(() => {
+        if (qrcodeStatus === -2 || qrcodeStatus === 1) return
+        executeTimer()
+      }, 2000)
+    }
+
+    executeTimer()
+
+    return timer
+  }
+
+  async function qrcodeLogin() {
+    const { error, data, message } = await window.api.postQRCodeLogin()
+    console.log("proccessLogin message: ", message, data)
+    if (data) {
+      setAccountList(data)
+    }
+  }
+  async function getCookies(services: ServiceAccount) {
+    window.api.getOtp(services).then((res) => console.log("res: ", res))
+  }
+
+  return (
+    <div>
+      <h1>QR Code Login</h1>
+      <img src={imgSrc} alt="qrcode" />
+
+      <h2>account</h2>
+      <ul>
+        {accountList?.accountList.map((account) => (
+          <li key={account.ssn}>
+            <div>{account.clickable}</div>
+            <div>{account.createTime}</div>
+            <div>{account.id}</div>
+            <div>{account.name}</div>
+            <div>{account.ssn}</div>
+            <button onClick={() => getCookies(account)}>get cookies</button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
