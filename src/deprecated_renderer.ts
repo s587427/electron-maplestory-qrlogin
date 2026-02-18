@@ -29,5 +29,5 @@
 import "./index.css"
 
 console.log(
-  '👋 This message is being logged by "renderer.ts", included via Vite 123',
+  '👋 This message is being logged by "renderer.ts", included via Vite 123'
 )

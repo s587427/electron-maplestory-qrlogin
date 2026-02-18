@@ -40,7 +40,7 @@ class QRCodeManager implements IQRCodeManager {
             Referer: `https://tw.newlogin.beanfun.com/login/qr_form.aspx?skey=${skey}`,
           },
           timeout: 5000,
-        },
+        }
       )
 
       // 解析 JSON
@@ -66,7 +66,7 @@ class QRCodeManager implements IQRCodeManager {
       return -1
     } catch (err: any) {
       console.error(
-        "Network Error on QRCode checking login status" + err.message,
+        "Network Error on QRCode checking login status" + err.message
       )
       return -1
     }

@@ -4,7 +4,7 @@ import { beanfunClient } from "./axios"
 
 async function getSessionKey() {
   const res = await beanfunClient.get(
-    "https://tw.beanfun.com/beanfun_block/bflogin/default.aspx?service=999999_T0",
+    "https://tw.beanfun.com/beanfun_block/bflogin/default.aspx?service=999999_T0"
   )
 
   // beanfunClient 的最後 URL 在這裡
@@ -115,7 +115,7 @@ async function getQRCodeStrEncryptData(skey: string) {
 }
 
 async function postQRCodeCheckLoginStatus(
-  qrcodeclass: QRCodeManagerType,
+  qrcodeclass: QRCodeManagerType
 ): Promise<"Failed" | "Token Expired" | "Success" | -1> {
   try {
     const skey = qrcodeclass
@@ -132,7 +132,7 @@ async function postQRCodeCheckLoginStatus(
           Referer: `https://tw.newlogin.beanfun.com/login/qr_form.aspx?skey=${skey}`,
         },
         timeout: 5000, // 可選，避免卡住
-      },
+      }
     )
 
     let jsonData
@@ -165,7 +165,7 @@ async function postQRCodeCheckLoginStatus(
 async function postQRCodeLogin(
   qrcodeclass: QRCodeManagerType,
   serviceCode = "610074",
-  serviceRegion = "T9",
+  serviceRegion = "T9"
 ) {
   const skey: string = qrcodeclass.skey
   console.log("skey: ", skey)
@@ -180,7 +180,7 @@ async function postQRCodeLogin(
     `https://tw.newlogin.beanfun.com/login/qr_step2.aspx?skey=${skey}`,
     {
       maxRedirects: 0, // 重要：不要自動 redirect
-    },
+    }
   )
 
   // 2. 從 Location 或 response 抓 akey + authkey
@@ -211,7 +211,7 @@ async function postQRCodeLogin(
   // 3. GET final_step.aspx?akey=...&authkey=...&bfapp=1 (//? test)
   const testRes = await beanfunClient.get(
     `https://tw.newlogin.beanfun.com/login/final_step.aspx?akey=${akey}&authkey=${authkey}&bfapp=1`,
-    { headers },
+    { headers }
   )
 
   const beanfunHost = "tw.beanfun.com"
@@ -232,7 +232,7 @@ async function postQRCodeLogin(
         ...headers,
         "Content-Type": "application/x-www-form-urlencoded",
       },
-    },
+    }
   )
 
   // 5. GET Location 指向的頁面（取得 bfWebToken cookie）
@@ -245,12 +245,12 @@ async function postQRCodeLogin(
     `https://${beanfunHost}`,
     {
       headers,
-    },
+    }
   )
 
   // 6. 從 cookie 取出 bfWebToken
   const beanfunCookies = await returnRes.config.jar?.getCookies(
-    `https://${beanfunHost}`,
+    `https://${beanfunHost}`
   )
   const bfWebToken = beanfunCookies?.find((c) => c.key === "bfWebToken")?.value
 

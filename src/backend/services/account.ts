@@ -18,18 +18,18 @@ async function getAccounts(
   webToken: string,
   serviceCode: string,
   serviceRegion: string,
-  fatal: boolean = true,
+  fatal: boolean = true
 ): Promise<GetAccountsResult> {
   const host: string = "tw.beanfun.com"
 
   // 先打 auth.aspx 初始化
   await beanfunClient.get(
-    `https://${host}/beanfun_block/auth.aspx?channel=game_zone&page_and_query=game_start.aspx%3Fservice_code_and_region%3D${serviceCode}_${serviceRegion}&web_token=${webToken}`,
+    `https://${host}/beanfun_block/auth.aspx?channel=game_zone&page_and_query=game_start.aspx%3Fservice_code_and_region%3D${serviceCode}_${serviceRegion}&web_token=${webToken}`
   )
 
   // 再抓帳號清單 HTML
   const { data: response } = await beanfunClient.get(
-    `https://${host}/beanfun_block/game_zone/game_server_account_list.aspx?sc=${serviceCode}&sr=${serviceRegion}&dt=${Date.now()}`,
+    `https://${host}/beanfun_block/game_zone/game_server_account_list.aspx?sc=${serviceCode}&sr=${serviceRegion}&dt=${Date.now()}`
   )
 
   // 抓帳號列表
@@ -59,7 +59,7 @@ async function getAccounts(
         ...acc,
         createTime: await getCreateTime(serviceCode, serviceRegion, acc.ssn),
       }
-    }),
+    })
   )
 
   // 抓提示訊息
@@ -107,7 +107,7 @@ async function getAccounts(
 async function getOTP(
   serviceAccount: ServiceAccount,
   serviceCode: string = "610074",
-  serviceRegion: string = "T9",
+  serviceRegion: string = "T9"
 ) {
   const host = "tw.beanfun.com"
   const loginHost = "tw.newlogin.beanfun.com"
@@ -119,11 +119,11 @@ async function getOTP(
   // Step1: game_start_step2.aspx
   // ===============================
   const gameStartStep2Response = await beanfunClient.get(
-    `https://${host}/beanfun_block/game_zone/game_start_step2.aspx?service_code=${serviceCode}&service_region=${serviceRegion}&sotp=${serviceAccount.ssn}&dt=${getCurrentTime(2)}`,
+    `https://${host}/beanfun_block/game_zone/game_start_step2.aspx?service_code=${serviceCode}&service_region=${serviceRegion}&sotp=${serviceAccount.ssn}&dt=${getCurrentTime(2)}`
   )
 
   let match = gameStartStep2Response.data.match(
-    /GetResultByLongPolling&key=(.*)"/,
+    /GetResultByLongPolling&key=(.*)"/
   )
   if (!match) {
     throw new Error(gameStartStep2Response.data)
@@ -136,7 +136,7 @@ async function getOTP(
   let unkKey: string | null = null
   let unkValue: string | null = null
   match = gameStartStep2Response.data.match(
-    /MyAccountData\.ServiceAccountCreateTime \+ "(.*)=(.*)";/,
+    /MyAccountData\.ServiceAccountCreateTime \+ "(.*)=(.*)";/
   )
   if (!match) {
     console.log("OTPNoUnkData")
@@ -151,7 +151,7 @@ async function getOTP(
   // ===============================
   if (!serviceAccount.createTime) {
     match = gameStartStep2Response.data.match(
-      /ServiceAccountCreateTime: "([^"]+)"/,
+      /ServiceAccountCreateTime: "([^"]+)"/
     )
     if (!match) {
       console.log("OTPNoCreateTime")
@@ -164,7 +164,7 @@ async function getOTP(
   // Step4: get_cookies.ashx → SecretCode
   // ===============================
   const getCookiesResponse = await beanfunClient.get(
-    `https://${loginHost}/generic_handlers/get_cookies.ashx`,
+    `https://${loginHost}/generic_handlers/get_cookies.ashx`
   )
 
   match = getCookiesResponse.data.match(/var m_strSecretCode = '(.*)';/)
@@ -192,14 +192,14 @@ async function getOTP(
 
   await beanfunClient.post(
     `https://${host}/beanfun_block/generic_handlers/record_service_start.ashx`,
-    new URLSearchParams(payload).toString(),
+    new URLSearchParams(payload).toString()
   )
 
   // ===============================
   // Step6: LongPolling result
   // ===============================
   await beanfunClient.get(
-    `https://${host}/generic_handlers/get_result.ashx?meth=GetResultByLongPolling&key=${longPollingKey}&_=${getCurrentTime()}`,
+    `https://${host}/generic_handlers/get_result.ashx?meth=GetResultByLongPolling&key=${longPollingKey}&_=${getCurrentTime()}`
   )
 
   // ===============================
@@ -243,7 +243,7 @@ async function getOTP(
   const decipher = crypto.createDecipheriv(
     "des-ecb",
     Buffer.from(key, "ascii"),
-    null,
+    null
   )
 
   decipher.setAutoPadding(false)
@@ -300,10 +300,10 @@ function getCurrentTime(method: number = 0): string {
 async function getCreateTime(
   serviceCode: string,
   serviceRegion: string,
-  sn: string,
+  sn: string
 ): Promise<null | string> {
   const response = await beanfunClient.get(
-    `https://tw.beanfun.com/beanfun_block/game_zone/game_start_step2.aspx?service_code=${serviceCode}&service_region=$${serviceRegion}&sotp=${sn}&dt=${getCurrentTime(2)}`,
+    `https://tw.beanfun.com/beanfun_block/game_zone/game_start_step2.aspx?service_code=${serviceCode}&service_region=$${serviceRegion}&sotp=${sn}&dt=${getCurrentTime(2)}`
   )
 
   console.log("getCreateTime response: ", response)

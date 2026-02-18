@@ -2,11 +2,10 @@ import { GetAccountsResult, ServiceAccount } from "./backend/services/account"
 import { IpcResponse } from "./types/response"
 
 export {}
+
+// 定義全域型別
 declare global {
   interface Window {
-    versions: {
-      node: string
-    }
     api: {
       getQRCode: () => Promise<IpcResponse<BlobPart>>
       getQRCodeStatus: () => Promise<IpcResponse<Number>>

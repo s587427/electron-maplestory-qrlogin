@@ -46,14 +46,14 @@ export async function registerIpcMains() {
       } catch (error) {
         return { error: true, message: error.message }
       }
-    },
+    }
   )
 
   ipcMain.handle(
     "get:otp",
     async (
       ipcMainInvokeEvent,
-      serviceAccount: ServiceAccount,
+      serviceAccount: ServiceAccount
     ): Promise<IpcResponse> => {
       try {
         // console.log("getOTP: ", serviceAccount)
@@ -62,6 +62,6 @@ export async function registerIpcMains() {
       } catch (error) {
         return { error: true, message: error.message }
       }
-    },
+    }
   )
 }

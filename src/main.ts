@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from "electron"
+import { app, BrowserWindow } from "electron"
 import started from "electron-squirrel-startup"
 import path from "node:path"
 import { registerIpcMains } from "./ipcMains"
@@ -23,7 +23,7 @@ const createWindow = () => {
     mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL)
   } else {
     mainWindow.loadFile(
-      path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`),
+      path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`)
     )
   }
 
@@ -32,8 +32,6 @@ const createWindow = () => {
 }
 
 // register ipc
-ipcMain.handle("ping", () => "pong")
-
 registerIpcMains()
 
 // This method will be called when Electron has finished
