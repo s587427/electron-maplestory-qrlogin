@@ -11,11 +11,18 @@ if (started) {
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 435,
+    height: 328,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
     },
+    resizable: false, // 不允許改變視窗大小
+    // titleBarStyle: "hidden",
+    // titleBarOverlay: {
+    //   color: "#acc6df",
+    //   symbolColor: "#fff",
+    //   height: 20,
+    // },
   })
 
   // and load the index.html of the app.
@@ -28,7 +35,10 @@ const createWindow = () => {
   }
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
+
+  // 如果要完全不顯示菜單列（連 Alt 也不能喚出）
+  // mainWindow.setMenuBarVisibility(false)
 }
 
 // register ipc

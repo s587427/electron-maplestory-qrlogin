@@ -1,0 +1,36 @@
+.qr-login {
+  display: flex;
+  flex-direction: column;
+  background-image: url("./gamania-icon.png");
+  background-repeat: no-repeat;
+  background-position: bottom right;
+  height: 100%;
+}
+
+.qr-login__title {
+  font-family: "Gen Jyuu Gothic";
+  margin: 31px auto 23px 31px;
+  color: #fff;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+}
+
+.qr-login__img {
+  width: 179px;
+  height: 179px;
+  margin: 0px auto 12px auto;
+}
+
+.qr-login__refresh {
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+  color: #000;
+  font-family: "Noto Sans TC";
+  font-size: 12px;
+  letter-spacing: 0.24px;
+  width: fit-content;
+  margin-inline: auto;
+  app-region: no-drag;
+}

@@ -1,0 +1,38 @@
+*,
+*::before,
+*::after {
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
+}
+
+/* load fonts */
+@font-face {
+  font-family: "Gen Jyuu Gothic"; /* Choose a name for your font */
+  src: url("./assets/fonts/GenJyuuGothic-Regular.ttf") format("truetype"); /* Specify the path and format */
+}
+
+@font-face {
+  font-family: "Noto Sans TC";
+  src: url("./assets/fonts/NotoSansTC-Regular.ttf") format("truetype"); /* Specify the path and format */
+}
+
+body {
+  font-family:
+    "Gen Jyuu Gothic", "Noto Sans TC", sans-serif; /* Apply the custom font to elements */
+
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE 10+ / Edge */
+  user-select: none; /* 標準語法 (Chrome, Opera, Edge) */
+
+  /* 可以被拖曳 */
+  app-region: drag;
+}
+
+.layout {
+  /* min-height: 100vh; */
+  background-color: #acc6df;
+  width: 435px;
+  height: 328px;
+}

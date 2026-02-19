@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router"
+import "./qrcode-login/index.css"
 
 export function AccountListPage() {
   const navigate = useNavigate()

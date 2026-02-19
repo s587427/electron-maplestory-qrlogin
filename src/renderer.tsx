@@ -1,12 +1,12 @@
 // src/renderer.tsx
 import ReactDOM from "react-dom/client"
-import { BrowserRouter } from "react-router"
-import App from "./App"
+import { HashRouter } from "react-router"
+import App from "./frontend/App"
 
 const root = ReactDOM.createRoot(document.getElementById("root"))
 
 root.render(
-  <BrowserRouter>
+  <HashRouter>
     <App />
-  </BrowserRouter>
+  </HashRouter>
 )
