@@ -1,6 +1,6 @@
+import { useAuth } from "@/frontend/contexts/AuthContext"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router"
-import { GetAccountsResult, ServiceAccount } from "src/backend/services/account"
 
 export function QRCodeLoingPage() {
   const navigate = useNavigate()
@@ -9,7 +9,7 @@ export function QRCodeLoingPage() {
     "https://tw.newlogin.beanfun.com/images/refresh.png"
   )
   const [qrcodeStatusState, setQRCodeStatusState] = useState<Number>(-1)
-  const [accountList, setAccountList] = useState<GetAccountsResult>(null)
+  const { setAccountList } = useAuth()
 
   useEffect(() => {
     let checkQRCodeTimer: NodeJS.Timeout
@@ -61,10 +61,8 @@ export function QRCodeLoingPage() {
     console.log("proccessLogin message: ", message, data)
     if (data) {
       setAccountList(data)
+      navigate("/account-list")
     }
-  }
-  async function getCookies(services: ServiceAccount) {
-    window.api.getOtp(services).then((res) => console.log("res: ", res))
   }
 
   return (
@@ -74,19 +72,6 @@ export function QRCodeLoingPage() {
       <button className="qr-login__refresh" onClick={() => alert(123)}>
         點擊刷新條碼
       </button>
-      {/* <h2>account</h2>
-      <ul>
-        {accountList?.accountList.map((account) => (
-          <li key={account.ssn}>
-            <div>{account.clickable}</div>
-            <div>{account.createTime}</div>
-            <div>{account.id}</div>
-            <div>{account.name}</div>
-            <div>{account.ssn}</div>
-            <button onClick={() => getCookies(account)}>get cookies</button>
-          </li>
-        ))}
-      </ul> */}
     </div>
   )
 }
