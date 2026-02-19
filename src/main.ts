@@ -17,7 +17,7 @@ const createWindow = () => {
       preload: path.join(__dirname, "preload.js"),
     },
     resizable: false, // 不允許改變視窗大小
-    // titleBarStyle: "hidden",
+    titleBarStyle: "hidden",
     // titleBarOverlay: {
     //   color: "#acc6df",
     //   symbolColor: "#fff",

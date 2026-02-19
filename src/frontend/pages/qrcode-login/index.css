@@ -1,7 +1,7 @@
 .qr-login {
   display: flex;
   flex-direction: column;
-  background-image: url("./gamania-icon.png");
+  background-image: url("@/frontend/assets/images/bg-gamania.png");
   background-repeat: no-repeat;
   background-position: bottom right;
   height: 100%;

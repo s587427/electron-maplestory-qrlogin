@@ -21,3 +21,10 @@ contextBridge.exposeInMainWorld("api", {
     ipcRenderer.invoke("get:otp", serviceAccount),
   // we can also expose variables, not just functions
 })
+
+contextBridge.exposeInMainWorld("win", {
+  info: () => ipcRenderer.send("window:info"),
+  minimize: () => ipcRenderer.send("window:minimize"),
+  maximize: () => ipcRenderer.send("window:maximize"),
+  close: () => ipcRenderer.send("window:close"),
+})

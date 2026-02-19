@@ -1,4 +1,4 @@
-import { ipcMain } from "electron"
+import { BrowserWindow, ipcMain } from "electron"
 import { qrcodeManager } from "./backend/classes/QRCodeManager"
 import {
   GetAccountsResult,
@@ -14,6 +14,28 @@ import {
 import { IpcResponse } from "./types/response"
 
 export async function registerIpcMains() {
+  // ons
+
+  ipcMain.on("window:info", (event) => {
+    console.log("click info btn from client")
+  })
+
+  ipcMain.on("window:minimize", (event) => {
+    BrowserWindow.fromWebContents(event.sender)?.minimize()
+  })
+
+  ipcMain.on("window:close", (event) => {
+    BrowserWindow.fromWebContents(event.sender)?.close()
+  })
+
+  ipcMain.on("window:maximize", (event) => {
+    console.log("click maximize btn from client")
+    // const win = BrowserWindow.fromWebContents(event.sender)
+    // if (!win) return
+    // win.isMaximized() ? win.unmaximize() : win.maximize()
+  })
+
+  // handles
   ipcMain.handle("get:qrcode", async (): Promise<IpcResponse<Buffer>> => {
     const skey = await getSessionKey()
 

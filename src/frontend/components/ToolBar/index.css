@@ -1,0 +1,30 @@
+.toolbar {
+  display: flex;
+  position: fixed;
+  top: 11px;
+  right: 14px;
+  gap: 7px;
+}
+
+.toolbar__btn {
+  width: 24px;
+  height: 24px;
+  background-color: transparent;
+  border: none;
+  background-repeat: no-repeat;
+  background-size: contain;
+  cursor: pointer;
+}
+
+.toolbar__maximize {
+  background-image: url("@/frontend/assets/images/toolbar/maximize.png");
+}
+.toolbar__close {
+  background-image: url("@/frontend/assets/images/toolbar/close.png");
+}
+.toolbar__minimize {
+  background-image: url("@/frontend/assets/images/toolbar/minimize.png");
+}
+.toolbar__info {
+  background-image: url("@/frontend/assets/images/toolbar/info.png");
+}

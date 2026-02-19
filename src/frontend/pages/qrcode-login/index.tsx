@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useNavigate } from "react-router"
 import { GetAccountsResult, ServiceAccount } from "src/backend/services/account"
 
@@ -11,33 +11,33 @@ export function QRCodeLoingPage() {
   const [qrcodeStatusState, setQRCodeStatusState] = useState<Number>(-1)
   const [accountList, setAccountList] = useState<GetAccountsResult>(null)
 
-  // useEffect(() => {
-  //   let checkQRCodeTimer: NodeJS.Timeout
+  useEffect(() => {
+    let checkQRCodeTimer: NodeJS.Timeout
 
-  //   window.api
-  //     .getQRCode()
-  //     .then((response) => {
-  //       // console.log(buffer)
+    window.api
+      .getQRCode()
+      .then((response) => {
+        // console.log(buffer)
 
-  //       const blob = new Blob([response.data], { type: "image/png" })
-  //       const imageUrl = URL.createObjectURL(blob)
-  //       setImgSrc(imageUrl)
+        const blob = new Blob([response.data], { type: "image/png" })
+        const imageUrl = URL.createObjectURL(blob)
+        setImgSrc(imageUrl)
 
-  //       // start check login status
-  //       checkQRCodeTimer = checkQRCodeLoginStatusTimer()
-  //     })
-  //     .catch((err) => console.log(err))
+        // start check login status
+        checkQRCodeTimer = checkQRCodeLoginStatusTimer()
+      })
+      .catch((err) => console.log(err))
 
-  //   return () => {
-  //     clearTimeout(checkQRCodeTimer)
-  //   }
-  // }, [])
+    return () => {
+      clearTimeout(checkQRCodeTimer)
+    }
+  }, [])
 
-  // useEffect(() => {
-  //   if (qrcodeStatusState === 1) {
-  //     qrcodeLogin()
-  //   }
-  // }, [qrcodeStatusState])
+  useEffect(() => {
+    if (qrcodeStatusState === 1) {
+      qrcodeLogin()
+    }
+  }, [qrcodeStatusState])
 
   function checkQRCodeLoginStatusTimer() {
     let timer: null | NodeJS.Timeout = null

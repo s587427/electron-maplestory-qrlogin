@@ -30,6 +30,10 @@ body {
   app-region: drag;
 }
 
+button {
+  app-region: no-drag;
+}
+
 .layout {
   /* min-height: 100vh; */
   background-color: #acc6df;
