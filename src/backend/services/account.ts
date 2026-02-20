@@ -306,7 +306,7 @@ async function getCreateTime(
     `https://tw.beanfun.com/beanfun_block/game_zone/game_start_step2.aspx?service_code=${serviceCode}&service_region=$${serviceRegion}&sotp=${sn}&dt=${getCurrentTime(2)}`
   )
 
-  console.log("getCreateTime response: ", response)
+  // console.log("getCreateTime response: ", response)
   // Regex 抓 ServiceAccountCreateTime
   const match = response.data.match(/ServiceAccountCreateTime: "([^"]+)"/)
 

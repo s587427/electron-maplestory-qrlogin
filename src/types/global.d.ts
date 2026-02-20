@@ -1,5 +1,5 @@
 import { GetAccountsResult, ServiceAccount } from "./backend/services/account"
-import { IpcResponse } from "./types/response"
+import { IpcResponse } from "./response"
 
 export {}
 
@@ -7,7 +7,7 @@ export {}
 declare global {
   interface Window {
     api: {
-      getQRCode: () => Promise<IpcResponse<BlobPart>>
+      getQRCode: () => Promise<IpcResponse<BlobPart | undefined>>
       getQRCodeStatus: () => Promise<IpcResponse<Number>>
       postQRCodeLogin: () => Promise<IpcResponse<GetAccountsResult>>
       getOtp: (serviceAccount: ServiceAccount) => Promise<IpcResponse>

@@ -36,18 +36,26 @@ export async function registerIpcMains() {
   })
 
   // handles
-  ipcMain.handle("get:qrcode", async (): Promise<IpcResponse<Buffer>> => {
-    const skey = await getSessionKey()
+  ipcMain.handle(
+    "get:qrcode",
+    async (): Promise<IpcResponse<Buffer | undefined>> => {
+      const skey = await getSessionKey()
 
-    const qrcodeValue = await getQRCodeValue(skey)
-    qrcodeManager.skey = qrcodeValue.skey
-    qrcodeManager.viewstate = qrcodeValue.viewstate
-    qrcodeManager.bitmapUrl = qrcodeValue.bitmapUrl
-    qrcodeManager.eventvalidation = qrcodeValue.eventvalidation
-    qrcodeManager.value = qrcodeValue.value
-    const arraybuffer = await getQRCodeImage(qrcodeManager)
-    return { message: "success", data: arraybuffer }
-  })
+      const qrcodeValue = await getQRCodeValue(skey)
+
+      if (qrcodeValue == null) {
+        return { error: true, message: "beanfun server error" }
+      }
+
+      qrcodeManager.skey = qrcodeValue.skey
+      qrcodeManager.viewstate = qrcodeValue.viewstate
+      qrcodeManager.bitmapUrl = qrcodeValue.bitmapUrl
+      qrcodeManager.eventvalidation = qrcodeValue.eventvalidation
+      qrcodeManager.value = qrcodeValue.value
+      const arraybuffer = await getQRCodeImage(qrcodeManager)
+      return { message: "success", data: arraybuffer }
+    }
+  )
 
   ipcMain.handle("get:qrcodeStatus", async (): Promise<IpcResponse<Number>> => {
     try {

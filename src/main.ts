@@ -36,9 +36,6 @@ const createWindow = () => {
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
-
-  // 如果要完全不顯示菜單列（連 Alt 也不能喚出）
-  // mainWindow.setMenuBarVisibility(false)
 }
 
 // register ipc

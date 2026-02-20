@@ -68,7 +68,7 @@ async function getQRCodeValue(skey: string) {
     }
   } catch (err) {
     if (err instanceof Error) {
-      console.error("getQRCodeImage error:", err.message)
+      console.error("getQRCodeValue error:", err.message)
     } else {
       console.log("Unknown error:", err)
     }
