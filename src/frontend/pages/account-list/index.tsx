@@ -72,10 +72,10 @@ export function AccountListPage() {
         if (!error) {
           setOtp(data)
           navigator.clipboard.writeText(data)
-          return
+        } else {
+          console.log("getOtpError: ", message)
+          navigate("/")
         }
-        console.log("getOtpError: ", message)
-        navigate("/")
       } catch (error) {
         console.log("fetchOtpError: ", error)
         navigate("/")
