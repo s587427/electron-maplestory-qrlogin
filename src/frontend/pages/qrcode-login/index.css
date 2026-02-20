@@ -1,25 +1,24 @@
 .qr-login {
   display: flex;
   flex-direction: column;
-  background-image: url("@/frontend/assets/images/bg-gamania.png");
-  background-repeat: no-repeat;
-  background-position: bottom right;
+  align-items: center;
   height: 100%;
 }
 
 .qr-login__title {
   font-family: "Gen Jyuu Gothic";
-  margin: 31px auto 23px 31px;
+  margin-top: 36px;
+  margin-bottom: 24px;
   color: #fff;
   font-size: 24px;
   font-weight: 700;
-  letter-spacing: 1.2px;
+  letter-spacing: 5%;
 }
 
 .qr-login__img {
   width: 179px;
   height: 179px;
-  margin: 0px auto 12px auto;
+  margin-bottom: 14px;
 }
 
 .qr-login__refresh {

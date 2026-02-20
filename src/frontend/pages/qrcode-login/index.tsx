@@ -1,37 +1,39 @@
 import { useAuth } from "@/frontend/contexts/AuthContext"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router"
-
+import "./index.css"
 export function QRCodeLoingPage() {
   const navigate = useNavigate()
+
+  const [isLoading, setIsloading] = useState<boolean>(true)
+  const [qrcodeBolb, setQRCodBlob] = useState<BlobPart>(null)
+  const [qrcodeStatusState, setQRCodeStatusState] = useState<Number>(-1)
 
   const [imgSrc, setImgSrc] = useState(
     "https://tw.newlogin.beanfun.com/images/refresh.png"
   )
-  const [qrcodeStatusState, setQRCodeStatusState] = useState<Number>(-1)
   const { setAccountList } = useAuth()
 
   useEffect(() => {
-    let checkQRCodeTimer: NodeJS.Timeout
-
-    window.api
-      .getQRCode()
-      .then((response) => {
-        // console.log(buffer)
-
-        const blob = new Blob([response.data], { type: "image/png" })
-        const imageUrl = URL.createObjectURL(blob)
-        setImgSrc(imageUrl)
-
-        // start check login status
-        checkQRCodeTimer = checkQRCodeLoginStatusTimer()
-      })
-      .catch((err) => console.log(err))
-
-    return () => {
-      clearTimeout(checkQRCodeTimer)
-    }
+    updateQRCodeBlob()
   }, [])
+
+  useEffect(() => {
+    let clearTimerFn = null
+    if (qrcodeBolb) {
+      const blob = new Blob([qrcodeBolb], { type: "image/png" })
+      const imageUrl = URL.createObjectURL(blob)
+      setImgSrc(imageUrl)
+
+      // start check login status
+      clearTimerFn = checkQRCodeLoginStatusTimer()
+    }
+    return () => {
+      if (clearTimerFn) {
+        clearTimerFn()
+      }
+    }
+  }, [qrcodeBolb])
 
   useEffect(() => {
     if (qrcodeStatusState === 1) {
@@ -41,7 +43,10 @@ export function QRCodeLoingPage() {
 
   function checkQRCodeLoginStatusTimer() {
     let timer: null | NodeJS.Timeout = null
+    let canRun = true
+
     async function executeTimer() {
+      if (!canRun) return
       const { data: qrcodeStatus } = await window.api.getQRCodeStatus()
       setQRCodeStatusState(qrcodeStatus)
       console.log("qrcodeStatus: ", qrcodeStatus)
@@ -53,7 +58,25 @@ export function QRCodeLoingPage() {
 
     executeTimer()
 
-    return timer
+    return () => {
+      console.log("canRun = false")
+      canRun = false
+    }
+  }
+
+  async function updateQRCodeBlob() {
+    setIsloading(true)
+    try {
+      const { data: blob, error, message } = await window.api.getQRCode()
+      if (!error) {
+        setQRCodBlob(blob)
+      } else {
+        console.log("updateQRCodeBlob error: ", message)
+      }
+    } catch (error) {
+      console.log("updateQRCodeBlob error", error)
+    }
+    setIsloading(false)
   }
 
   async function qrcodeLogin() {
@@ -69,7 +92,11 @@ export function QRCodeLoingPage() {
     <div className="qr-login">
       <h1 className="qr-login__title">Gama Play | Login</h1>
       <img className="qr-login__img" src={imgSrc} alt="qrcode" />
-      <button className="qr-login__refresh" onClick={() => alert(123)}>
+      <button
+        className="qr-login__refresh"
+        onClick={updateQRCodeBlob}
+        disabled={isLoading}
+      >
         點擊刷新條碼
       </button>
     </div>
