@@ -16,10 +16,10 @@ export function ToolBar() {
         className="toolbar__btn toolbar__minimize"
         onClick={() => handleBtnsClick("minimize")}
       />
-      <button
+      {/* <button
         className="toolbar__btn toolbar__maximize"
         onClick={() => handleBtnsClick("maximize")}
-      />
+      /> */}
       <button
         className="toolbar__btn toolbar__close"
         onClick={() => handleBtnsClick("close")}
