@@ -1,5 +1,7 @@
 import axios from "axios"
 
+export type QRCodeStatus = -2 | -1 | 0 | 1
+
 export interface IQRCodeManager {
   skey: string
   viewstate: string
@@ -23,7 +25,7 @@ class QRCodeManager implements IQRCodeManager {
     this.bitmapUrl = ""
   }
 
-  async checkLoingStatus() {
+  async checkLoingStatus(): Promise<QRCodeStatus> {
     try {
       const { skey, value } = this
 

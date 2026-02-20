@@ -6,13 +6,13 @@
 }
 
 .qr-login__title {
-  font-family: "Gen Jyuu Gothic";
   margin-top: 36px;
   margin-bottom: 24px;
   color: #fff;
   font-size: 24px;
   font-weight: 700;
-  letter-spacing: 5%;
+  font-family: "Gen Jyuu Gothic";
+  letter-spacing: 1.2px;
 }
 
 .qr-login__img {
@@ -26,10 +26,8 @@
   background-color: transparent;
   border: none;
   color: #000;
-  font-family: "Noto Sans TC";
-  font-size: 12px;
-  letter-spacing: 0.24px;
+  font-size: 14px;
+  letter-spacing: 0.28px;
   width: fit-content;
   margin-inline: auto;
-  app-region: no-drag;
 }

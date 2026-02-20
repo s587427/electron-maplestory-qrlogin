@@ -1,5 +1,5 @@
 import { BrowserWindow, ipcMain } from "electron"
-import { qrcodeManager } from "./backend/classes/QRCodeManager"
+import { qrcodeManager, QRCodeStatus } from "./backend/classes/QRCodeManager"
 import {
   GetAccountsResult,
   getOTP,
@@ -57,15 +57,18 @@ export async function registerIpcMains() {
     }
   )
 
-  ipcMain.handle("get:qrcodeStatus", async (): Promise<IpcResponse<Number>> => {
-    try {
-      const resultInt = await qrcodeManager.checkLoingStatus()
-      return { message: "success", data: resultInt }
-    } catch (err) {
-      console.log("get:qrcodeStatus: ", err)
-      return { error: true, message: "error" }
+  ipcMain.handle(
+    "get:qrcodeStatus",
+    async (): Promise<IpcResponse<QRCodeStatus>> => {
+      try {
+        const resultInt = await qrcodeManager.checkLoingStatus()
+        return { message: "success", data: resultInt }
+      } catch (err) {
+        console.log("get:qrcodeStatus: ", err)
+        return { error: true, message: "error" }
+      }
     }
-  })
+  )
 
   ipcMain.handle(
     "post:qrcodeLogin",

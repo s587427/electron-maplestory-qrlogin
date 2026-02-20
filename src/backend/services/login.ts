@@ -168,7 +168,7 @@ async function postQRCodeLogin(
   serviceRegion = "T9"
 ) {
   const skey: string = qrcodeclass.skey
-  console.log("skey: ", skey)
+  // console.log("skey: ", skey)
 
   // 設定 Referer
   const headers = {
@@ -206,7 +206,7 @@ async function postQRCodeLogin(
     throw new Error("AKeyParseFailed")
   }
 
-  console.log("Got akey:", akey.slice(0, 8), "authkey:", authkey.slice(0, 8))
+  // console.log("Got akey:", akey.slice(0, 8), "authkey:", authkey.slice(0, 8))
 
   // 3. GET final_step.aspx?akey=...&authkey=...&bfapp=1 (//? test)
   const testRes = await beanfunClient.get(
@@ -254,11 +254,11 @@ async function postQRCodeLogin(
   )
   const bfWebToken = beanfunCookies?.find((c) => c.key === "bfWebToken")?.value
 
-  console.log("bfWebToken: ", bfWebToken)
+  // console.log("bfWebToken: ", bfWebToken)
 
   // 7. 取得帳號列表
   const accouts = await getAccounts(bfWebToken, serviceCode, serviceRegion)
-  console.log("accouts: ", accouts)
+  // console.log("accouts: ", accouts)
 
   return accouts
 }
