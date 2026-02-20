@@ -19,7 +19,7 @@
 
 body {
   font-family:
-    "Gen Jyuu Gothic", "Noto Sans TC", sans-serif; /* Apply the custom font to elements */
+    "Noto Sans TC", "Gen Jyuu Gothic", sans-serif; /* Apply the custom font to elements */
 
   -webkit-user-select: none; /* Safari */
   -moz-user-select: none; /* Firefox */

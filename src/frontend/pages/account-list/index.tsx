@@ -99,7 +99,7 @@ export function AccountListPage() {
         {accountList?.accountList.map((account) => (
           <li key={account.id}>
             <span
-              className={selectedAccount?.id === account.id && "selected"}
+              className={selectedAccount?.id === account.id ? "selected" : ""}
               onClick={() => handleClickAccount(account)}
             >
               {account.id}
