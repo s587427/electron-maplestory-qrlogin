@@ -7,10 +7,13 @@ export default function App() {
   return (
     <div className="layout">
       <ToolBar />
-      <Routes>
-        <Route path="/" element={<QRCodeLoingPage />} />
-        <Route path="/account-list" element={<AccountListPage />} />
-      </Routes>
+      <main>
+        <Routes>
+          <Route path="/" element={<QRCodeLoingPage />} />
+          <Route path="/account-list" element={<AccountListPage />} />
+          {/* <Route path="/" element={<AccountListPage />} /> */}
+        </Routes>
+      </main>
     </div>
   )
 }

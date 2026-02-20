@@ -36,7 +36,26 @@ button {
 
 .layout {
   /* min-height: 100vh; */
-  background-color: #acc6df;
   width: 435px;
   height: 328px;
+
+  /* 最上層=第一層依序往下 */
+  background-image:
+    url("@/frontend/assets/images/bg-yeti.png"),
+    url("@/frontend/assets/images/bg-gamania.png"),
+    linear-gradient(to bottom, #ff9930 75.48%, #fff 100%);
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  background-size:
+    178px 328px,
+    353px 202px,
+    100% 100%;
+  background-position:
+    left,
+    bottom right,
+    center;
+}
+
+main {
+  padding-left: 178px;
+  height: 100%;
 }
