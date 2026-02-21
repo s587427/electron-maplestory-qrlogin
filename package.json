@@ -42,12 +42,9 @@
   },
   "dependencies": {
     "@vitejs/plugin-react": "^5.1.4",
-    "axios": "^1.13.5",
-    "axios-cookiejar-support": "^6.0.5",
     "electron-squirrel-startup": "^1.0.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
-    "react-router": "^7.13.0",
-    "tough-cookie": "^6.0.0"
+    "react-router": "^7.13.0"
   }
 }

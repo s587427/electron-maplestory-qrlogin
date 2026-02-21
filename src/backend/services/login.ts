@@ -1,60 +1,70 @@
+import { BrowserWindow, session } from "electron"
 import { IQRCodeManager, QRCodeManagerType } from "../classes/QRCodeManager"
 import { getAccounts } from "./account"
-import { beanfunClient } from "./axios"
+import { beanfunFetch } from "./request"
 
-async function getSessionKey() {
-  const res = await beanfunClient.get(
-    "https://tw.beanfun.com/beanfun_block/bflogin/default.aspx?service=999999_T0"
-  )
+async function getSessionKey(): Promise<string | null> {
+  return new Promise((resolve, reject) => {
+    try {
+      const win = new BrowserWindow({
+        show: false, // 不顯示畫面
+      })
 
-  // beanfunClient 的最後 URL 在這裡
-  const finalUrl = res.request.res.responseUrl
+      win.loadURL(
+        "https://tw.beanfun.com/beanfun_block/bflogin/default.aspx?service=999999_T0"
+      )
 
-  console.log("Final URL:", finalUrl)
-  // 解析 query
-  const parsed = new URL(finalUrl)
-
-  const skey = parsed.searchParams.get("skey")
-
-  return skey
+      win.webContents.on("did-navigate", async (e, url) => {
+        const response = await beanfunFetch(url)
+        // const html = await response.text()
+        const parsed = new URL(url)
+        const skey = parsed.searchParams.get("skey")
+        win.destroy()
+        resolve(skey)
+      })
+    } catch (error) {
+      console.log("getSessionKey error: ", error)
+      resolve(null)
+    }
+  })
 }
 
 async function getQRCodeValue(skey: string) {
   try {
     // 1. Download HTML response
-    const url = `https://tw.newlogin.beanfun.com/login/qr_form.aspx?skey=${skey}`
 
-    const res = await beanfunClient.get(url)
-
-    const response = res.data // HTML string
+    const response = await beanfunFetch(
+      `https://tw.newlogin.beanfun.com/login/qr_form.aspx?skey=${skey}`
+    )
+    const htmlStr = await response.text()
 
     // 2. Extract __VIEWSTATE
     let regex = /id="__VIEWSTATE" value="(.*)" \/>/
 
-    if (!regex.test(response)) {
+    if (!regex.test(htmlStr)) {
       throw new Error("LoginNoViewstate")
     }
 
-    const viewstate = response.match(regex)[1]
+    const viewstate = htmlStr.match(regex)[1]
 
     // 3. Extract __EVENTVALIDATION
     regex = /id="__EVENTVALIDATION" value="(.*)" \/>/
 
-    if (!regex.test(response)) {
+    if (!regex.test(htmlStr)) {
       throw new Error("LoginNoEventvalidation")
     }
 
-    const eventvalidation = response.match(regex)[1]
+    const eventvalidation = htmlStr.match(regex)[1]
 
     // 4. Extract QR Code Hash Path
     regex =
       /\$\("#theQrCodeImg"\)\.attr\("src", "\.\.\/(.*)" \+ obj\.strEncryptData\);/
 
-    if (!regex.test(response)) {
+    if (!regex.test(htmlStr)) {
       throw new Error("LoginNoHash")
     }
 
-    const value = response.match(regex)[1]
+    const value = htmlStr.match(regex)[1]
 
     // 5.Get OR Code Encrypt Data
     const strEncryptData = await getQRCodeStrEncryptData(skey)
@@ -80,11 +90,10 @@ async function getQRCodeImage(qrCodeClass: IQRCodeManager) {
   try {
     const url = qrCodeClass.bitmapUrl + qrCodeClass.value
 
-    const res = await beanfunClient.get(url, {
-      responseType: "arraybuffer", // 重要！取得 Buffer
-    })
+    const response = await beanfunFetch(url)
+    const arraybuffer = await response.arrayBuffer()
 
-    return Buffer.from(res.data) // Node.js Buffer
+    return Buffer.from(arraybuffer) // Node.js Buffer
   } catch (err) {
     if (err instanceof Error) {
       console.error("getQRCodeImage error:", err.message)
@@ -97,13 +106,10 @@ async function getQRCodeImage(qrCodeClass: IQRCodeManager) {
 }
 
 async function getQRCodeStrEncryptData(skey: string) {
-  // 1. Request JSON API
-  const url = `https://tw.newlogin.beanfun.com/generic_handlers/get_qrcodeData.ashx?skey=${skey}`
-
-  const res = await beanfunClient.get(url)
-
-  // 2. Response JSON
-  const jsonData = res.data
+  const response = await beanfunFetch(
+    `https://tw.newlogin.beanfun.com/generic_handlers/get_qrcodeData.ashx?skey=${skey}`
+  )
+  const jsonData = await response.json()
 
   // 3. Check intResult
   if (!jsonData.intResult || jsonData.intResult !== 1) {
@@ -121,31 +127,20 @@ async function postQRCodeCheckLoginStatus(
     const skey = qrcodeclass
     const payload = new URLSearchParams()
     payload.append("status", qrcodeclass.value)
-    console.log("payload: ", payload.toString())
 
-    const response = await beanfunClient.post(
+    const response = await beanfunFetch(
       `https://tw.newlogin.beanfun.com/generic_handlers/CheckLoginStatus.ashx`,
-      payload.toString(),
       {
+        referrer: `https://tw.newlogin.beanfun.com/login/qr_form.aspx?skey=${skey}`,
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
-          Referer: `https://tw.newlogin.beanfun.com/login/qr_form.aspx?skey=${skey}`,
         },
-        timeout: 5000, // 可選，避免卡住
+        method: "POST",
+        body: payload.toString(),
       }
     )
 
-    let jsonData
-    try {
-      jsonData = response.data
-      // Axios 會自動 parse JSON，但確保型別
-      if (typeof jsonData === "string") {
-        jsonData = JSON.parse(jsonData)
-      }
-    } catch {
-      console.error("LoginJsonParseFailed")
-      return -1
-    }
+    const jsonData = await response.json()
 
     const result: string = jsonData["ResultMessage"]
     console.log(result)
@@ -170,51 +165,43 @@ async function postQRCodeLogin(
   const skey: string = qrcodeclass.skey
   // console.log("skey: ", skey)
 
-  // 設定 Referer
-  const headers = {
-    Referer: `https://tw.newlogin.beanfun.com/login/qr_form.aspx?skey=${skey}`,
-  }
+  const referrer = `https://tw.newlogin.beanfun.com/login/qr_form.aspx?skey=${skey}`
 
   // 1. GET qr_step2.aspx?skey=xxx （不自動 redirect）
-  const step2Res = await beanfunClient.get(
+  const step2Response = await beanfunFetch(
     `https://tw.newlogin.beanfun.com/login/qr_step2.aspx?skey=${skey}`,
     {
-      maxRedirects: 0, // 重要：不要自動 redirect
+      referrer,
+      redirect: "manual",
     }
   )
 
-  // 2. 從 Location 或 response 抓 akey + authkey
+  const htmlStr = await step2Response.text()
+
+  // 2. 從 response 抓 akey + authkey
   let akey = ""
   let authkey = ""
-  const location = step2Res.headers.location || step2Res.config.url || ""
-  const akeyMatch = location.match(/akey=([^&]+)/)
-  const authkeyMatch = location.match(/authkey=([^&]+)/)
-
-  if (akeyMatch && authkeyMatch) {
-    akey = akeyMatch[1]
-    authkey = authkeyMatch[1]
-  } else {
-    // 可能在 response body 裡，照 C# regex 抓
-    const bodyMatch = step2Res.data.match(/akey=([^&]+)&authkey=([^&]+)/)
-    if (bodyMatch) {
-      akey = bodyMatch[1]
-      authkey = bodyMatch[2]
-    }
+  // console.log("可能在 response body 裡，照 C# regex 抓")
+  const bodyMatch = htmlStr.match(/akey=([^&]+)&authkey=([^&]+)/)
+  if (bodyMatch) {
+    akey = bodyMatch[1]
+    authkey = bodyMatch[2]
   }
 
   if (!akey || !authkey) {
     throw new Error("AKeyParseFailed")
   }
 
-  // console.log("Got akey:", akey.slice(0, 8), "authkey:", authkey.slice(0, 8))
+  // console.log("akey: ", akey, "authKey: ", authkey)
 
   // 3. GET final_step.aspx?akey=...&authkey=...&bfapp=1 (//? test)
-  const testRes = await beanfunClient.get(
+  const testRes = await beanfunFetch(
     `https://tw.newlogin.beanfun.com/login/final_step.aspx?akey=${akey}&authkey=${authkey}&bfapp=1`,
-    { headers }
+    { referrer }
   )
 
   const beanfunHost = "tw.beanfun.com"
+
   // 4. POST beanfun_block/bflogin/return.aspx
   const returnPayload = new URLSearchParams({
     SessionKey: skey,
@@ -224,39 +211,38 @@ async function postQRCodeLogin(
     ServiceAccountSN: "0",
   })
 
-  const returnRes = await beanfunClient.post(
-    `https://${beanfunHost}/beanfun_block/bflogin/return.aspx`,
-    returnPayload.toString(),
-    {
-      headers: {
-        ...headers,
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-    }
-  )
+  try {
+    const returnResponse = await beanfunFetch(
+      `https://${beanfunHost}/beanfun_block/bflogin/return.aspx`,
+      {
+        referrer,
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        method: "POST",
+        body: returnPayload.toString(),
+      }
+    )
+  } catch (err) {
+    console.log("POST beanfun_block/bflogin/return.aspx error")
+  }
 
-  // 5. GET Location 指向的頁面（取得 bfWebToken cookie）
-  // console.log("returnRes: ", returnRes)
-  // const returnLocation = returnRes.headers.location
-  // if (!returnLocation) throw new Error("NoLocationHeader")
+  const finalResponse = await beanfunFetch(`https://${beanfunHost}`, {
+    referrer,
+  })
 
-  const finalRes = await beanfunClient.get(
-    // `https://${beanfunHost}/${returnLocation}`,
-    `https://${beanfunHost}`,
-    {
-      headers,
-    }
-  )
+  // 4. 從 cookie 取出 bfWebToken
+  const beanfunCookies = await session.defaultSession.cookies.get({
+    url: `https://tw.beanfun.com`,
+  })
 
-  // 6. 從 cookie 取出 bfWebToken
-  const beanfunCookies = await returnRes.config.jar?.getCookies(
-    `https://${beanfunHost}`
-  )
-  const bfWebToken = beanfunCookies?.find((c) => c.key === "bfWebToken")?.value
+  const bfWebToken = beanfunCookies.find(
+    (cookie) => cookie.name === "bfWebToken"
+  )?.value
 
   // console.log("bfWebToken: ", bfWebToken)
 
-  // 7. 取得帳號列表
+  // 5. 取得帳號列表
   const accouts = await getAccounts(bfWebToken, serviceCode, serviceRegion)
   // console.log("accouts: ", accouts)
 

@@ -40,7 +40,6 @@ export async function registerIpcMains() {
     "get:qrcode",
     async (): Promise<IpcResponse<Buffer | undefined>> => {
       const skey = await getSessionKey()
-
       const qrcodeValue = await getQRCodeValue(skey)
 
       if (qrcodeValue == null) {

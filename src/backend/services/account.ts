@@ -1,5 +1,6 @@
 import crypto from "crypto"
-import { beanfunClient, jar } from "./axios"
+import { session } from "electron"
+import { beanfunFetch } from "./request"
 
 export interface ServiceAccount {
   clickable: boolean
@@ -23,14 +24,16 @@ async function getAccounts(
   const host: string = "tw.beanfun.com"
 
   // 先打 auth.aspx 初始化
-  await beanfunClient.get(
+  await beanfunFetch(
     `https://${host}/beanfun_block/auth.aspx?channel=game_zone&page_and_query=game_start.aspx%3Fservice_code_and_region%3D${serviceCode}_${serviceRegion}&web_token=${webToken}`
   )
 
   // 再抓帳號清單 HTML
-  const { data: response } = await beanfunClient.get(
+  const response = await beanfunFetch(
     `https://${host}/beanfun_block/game_zone/game_server_account_list.aspx?sc=${serviceCode}&sr=${serviceRegion}&dt=${Date.now()}`
   )
+
+  const htmlStr = await response.text()
 
   // 抓帳號列表
   const accountRegex =
@@ -39,7 +42,7 @@ async function getAccounts(
   let accountList: ServiceAccount[] = []
   let match: RegExpExecArray | null
 
-  while ((match = accountRegex.exec(response)) !== null) {
+  while ((match = accountRegex.exec(htmlStr)) !== null) {
     const [, onclick, id, ssn, name] = match
     if (!id || !ssn || !name) continue
 
@@ -65,7 +68,7 @@ async function getAccounts(
   // 抓提示訊息
   const noticeRegex =
     /<div id="divServiceAccountAmountLimitNotice" class="InnerContent">(.*)<\/div>/
-  const noticeMatch = response.match(noticeRegex)
+  const noticeMatch = htmlStr.match(noticeRegex)
 
   let accountAmountLimitNotice = ""
   if (noticeMatch) {
@@ -112,21 +115,25 @@ async function getOTP(
   const host = "tw.beanfun.com"
   const loginHost = "tw.newlogin.beanfun.com"
 
-  const cookies = await jar.getCookies(`https://${host}`)
-  const webToken = cookies?.find((c) => c.key === "bfWebToken")?.value
+  const beanfunCookies = await session.defaultSession.cookies.get({
+    url: `https://${host}`,
+  })
+
+  const webToken = beanfunCookies.find(
+    (cookie) => cookie.name === "bfWebToken"
+  )?.value
 
   // ===============================
   // Step1: game_start_step2.aspx
   // ===============================
-  const gameStartStep2Response = await beanfunClient.get(
-    `https://${host}/beanfun_block/game_zone/game_start_step2.aspx?service_code=${serviceCode}&service_region=${serviceRegion}&sotp=${serviceAccount.ssn}&dt=${getCurrentTime(2)}`
-  )
 
-  let match = gameStartStep2Response.data.match(
-    /GetResultByLongPolling&key=(.*)"/
-  )
+  const gameStartStep2Url = `https://${host}/beanfun_block/game_zone/game_start_step2.aspx?service_code=${serviceCode}&service_region=${serviceRegion}&sotp=${serviceAccount.ssn}&dt=${getCurrentTime(2)}`
+  const gameStartStep2Response = await beanfunFetch(gameStartStep2Url)
+  const gameStartStep2HtmlStr = await gameStartStep2Response.text()
+
+  let match = gameStartStep2HtmlStr.match(/GetResultByLongPolling&key=(.*)"/)
   if (!match) {
-    throw new Error(gameStartStep2Response.data)
+    throw new Error("GetResultByLongPolling&key=?")
   }
   const longPollingKey = match[1]
 
@@ -135,7 +142,7 @@ async function getOTP(
   // ===============================
   let unkKey: string | null = null
   let unkValue: string | null = null
-  match = gameStartStep2Response.data.match(
+  match = gameStartStep2HtmlStr.match(
     /MyAccountData\.ServiceAccountCreateTime \+ "(.*)=(.*)";/
   )
   if (!match) {
@@ -150,9 +157,7 @@ async function getOTP(
   // Step3: ServiceAccountCreateTime
   // ===============================
   if (!serviceAccount.createTime) {
-    match = gameStartStep2Response.data.match(
-      /ServiceAccountCreateTime: "([^"]+)"/
-    )
+    match = gameStartStep2HtmlStr.match(/ServiceAccountCreateTime: "([^"]+)"/)
     if (!match) {
       console.log("OTPNoCreateTime")
       throw new Error("OTPNoCreateTime")
@@ -163,11 +168,13 @@ async function getOTP(
   // ===============================
   // Step4: get_cookies.ashx → SecretCode
   // ===============================
-  const getCookiesResponse = await beanfunClient.get(
+  const getCookiesResponse = await beanfunFetch(
     `https://${loginHost}/generic_handlers/get_cookies.ashx`
   )
 
-  match = getCookiesResponse.data.match(/var m_strSecretCode = '(.*)';/)
+  const getCookiesHtmlStr = await getCookiesResponse.text()
+
+  match = getCookiesHtmlStr.match(/var m_strSecretCode = '(.*)';/)
   if (!match) {
     console.log("OTPNoSecretCode")
     throw new Error("OTPNoSecretCode")
@@ -190,15 +197,18 @@ async function getOTP(
     payload[unkKey] = unkValue
   }
 
-  await beanfunClient.post(
+  await beanfunFetch(
     `https://${host}/beanfun_block/generic_handlers/record_service_start.ashx`,
-    new URLSearchParams(payload).toString()
+    {
+      method: "POST",
+      body: new URLSearchParams(payload).toString(),
+    }
   )
 
   // ===============================
   // Step6: LongPolling result
   // ===============================
-  await beanfunClient.get(
+  await beanfunFetch(
     `https://${host}/generic_handlers/get_result.ashx?meth=GetResultByLongPolling&key=${longPollingKey}&_=${getCurrentTime()}`
   )
 
@@ -216,20 +226,21 @@ async function getOTP(
     `&ServiceAccount=${serviceAccount.id}` +
     `&CreateTime=${serviceAccount.createTime.replace(/ /g, "%20")}` +
     `&d=${Math.floor(process.uptime() * 1000)}`
-  const getWebstartOtpResponse = await beanfunClient.get(url)
+  const getWebstartOtpResponse = await beanfunFetch(url)
+  const getWebstartOtpHtmlStr = await getWebstartOtpResponse.text()
 
-  if (!getWebstartOtpResponse.data) {
+  if (!getWebstartOtpHtmlStr) {
     console.log("OTPNoResponse")
     throw new Error("OTPNoResponse")
   }
 
-  const parts = getWebstartOtpResponse.data.split(";")
+  const parts = getWebstartOtpHtmlStr.split(";")
   if (parts.length < 2) {
     console.log("OTPNoResponse")
     throw new Error("OTPNoResponse")
   }
   if (parts[0] !== "1") {
-    console.log("GetOtpError:", getWebstartOtpResponse.data, parts[1])
+    console.log("GetOtpError:", getWebstartOtpHtmlStr, parts[1])
     throw new Error("GetOtpError")
   }
 
@@ -252,7 +263,7 @@ async function getOTP(
   decrypted = Buffer.concat([decrypted, decipher.final()])
 
   const otp = decrypted.toString("utf8").replace(/\0/g, "").trim()
-  console.log({ parts, encrypted, key, decipher, otp })
+  // console.log({ parts, encrypted, key, decipher, otp })
 
   return otp
 }
@@ -302,13 +313,14 @@ async function getCreateTime(
   serviceRegion: string,
   sn: string
 ): Promise<null | string> {
-  const response = await beanfunClient.get(
+  const response = await beanfunFetch(
     `https://tw.beanfun.com/beanfun_block/game_zone/game_start_step2.aspx?service_code=${serviceCode}&service_region=$${serviceRegion}&sotp=${sn}&dt=${getCurrentTime(2)}`
   )
+  const htmlStr = await response.text()
 
   // console.log("getCreateTime response: ", response)
   // Regex 抓 ServiceAccountCreateTime
-  const match = response.data.match(/ServiceAccountCreateTime: "([^"]+)"/)
+  const match = htmlStr.match(/ServiceAccountCreateTime: "([^"]+)"/)
 
   if (!match) return null
 

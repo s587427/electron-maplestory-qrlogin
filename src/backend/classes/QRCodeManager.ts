@@ -1,4 +1,4 @@
-import axios from "axios"
+import { beanfunFetch } from "../services/request"
 
 export type QRCodeStatus = -2 | -1 | 0 | 1
 
@@ -33,29 +33,19 @@ class QRCodeManager implements IQRCodeManager {
       const payload = new URLSearchParams()
       payload.append("status", value)
 
-      const response = await axios.post(
+      const response = await beanfunFetch(
         "https://tw.newlogin.beanfun.com/generic_handlers/CheckLoginStatus.ashx",
-        payload.toString(),
         {
+          referrer: `https://tw.newlogin.beanfun.com/login/qr_form.aspx?skey=${skey}`,
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
-            Referer: `https://tw.newlogin.beanfun.com/login/qr_form.aspx?skey=${skey}`,
           },
-          timeout: 5000,
+          method: "POST",
+          body: payload.toString(),
         }
       )
 
-      // 解析 JSON
-      let jsonData: any
-      try {
-        jsonData =
-          typeof response.data === "string"
-            ? JSON.parse(response.data)
-            : response.data
-      } catch {
-        console.error("LoginJsonParseFailed")
-        return -1
-      }
+      const jsonData = await response.json()
 
       const result: string = jsonData["ResultMessage"]
       console.log("QR Check result:", result)
@@ -76,14 +66,5 @@ class QRCodeManager implements IQRCodeManager {
 }
 
 export const qrcodeManager = new QRCodeManager()
-
-// let instance: QRCodeManager | null = null
-
-// export default function getQRCodeManager() {
-//   if (!instance) {
-//     instance = new QRCodeManager()
-//   }
-//   return instance
-// }
 
 export type QRCodeManagerType = QRCodeManager
