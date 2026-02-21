@@ -1,6 +1,6 @@
 import { BrowserWindow, session } from "electron"
 import { IQRCodeManager, QRCodeManagerType } from "../classes/QRCodeManager"
-import { getAccounts } from "./account"
+import { getAccounts } from "./auth"
 import { beanfunFetch } from "./request"
 
 async function getSessionKey(): Promise<string | null> {

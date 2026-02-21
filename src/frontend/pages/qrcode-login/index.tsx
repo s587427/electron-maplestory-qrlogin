@@ -20,7 +20,7 @@ export function QRCodeLoingPage() {
   const refreshImgSrc = "https://tw.newlogin.beanfun.com/images/refresh.png"
 
   const [imgSrc, setImgSrc] = useState(refreshImgSrc)
-  const { setAccountList } = useAuth()
+  const { signIn } = useAuth()
 
   useEffect(() => {
     updateQRCodeBlob()
@@ -45,7 +45,7 @@ export function QRCodeLoingPage() {
 
   useEffect(() => {
     if (qrcodeStatusState === 1) {
-      qrcodeLogin()
+      signIn()
     }
   }, [qrcodeStatusState])
 
@@ -87,15 +87,6 @@ export function QRCodeLoingPage() {
       console.log("updateQRCodeBlob error", error)
     }
     setIsloading(false)
-  }
-
-  async function qrcodeLogin() {
-    const { error, data, message } = await window.api.postQRCodeLogin()
-    console.log("proccessLogin message: ", message, data)
-    if (data) {
-      setAccountList(data)
-      navigate("/account-list")
-    }
   }
 
   return (

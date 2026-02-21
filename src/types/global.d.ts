@@ -11,6 +11,7 @@ declare global {
       getQRCodeStatus: () => Promise<IpcResponse<QRCodeStatus>>
       postQRCodeLogin: () => Promise<IpcResponse<GetAccountsResult>>
       getOtp: (serviceAccount: ServiceAccount) => Promise<IpcResponse>
+      signOut: () => Promise<IpcResponse<boolean>>
     }
     win: {
       info: () => void

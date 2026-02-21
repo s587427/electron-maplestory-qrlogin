@@ -2,7 +2,7 @@
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 
 import { contextBridge, ipcRenderer } from "electron"
-import { ServiceAccount } from "./backend/services/account"
+import { ServiceAccount } from "./backend/services/auth"
 
 contextBridge.exposeInMainWorld("versions", {
   node: () => process.versions.node,
@@ -17,6 +17,7 @@ contextBridge.exposeInMainWorld("api", {
   getQRCode: () => ipcRenderer.invoke("get:qrcode"),
   getQRCodeStatus: () => ipcRenderer.invoke("get:qrcodeStatus"),
   postQRCodeLogin: () => ipcRenderer.invoke("post:qrcodeLogin"),
+  signOut: () => ipcRenderer.invoke("sign-out"),
   getOtp: (serviceAccount: ServiceAccount) =>
     ipcRenderer.invoke("get:otp", serviceAccount),
   // we can also expose variables, not just functions

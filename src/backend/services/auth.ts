@@ -268,6 +268,31 @@ async function getOTP(
   return otp
 }
 
+async function signOut() {
+  const host = "tw.beanfun.com"
+  const loginHost = "tw.newlogin.beanfun.com"
+
+  try {
+    await beanfunFetch(
+      `https://${host}/generic_handlers/remove_bflogin_session.ashx`
+    )
+    await beanfunFetch(`https://${loginHost}/logout.aspx?service=999999_T0`)
+
+    // TW
+    await beanfunFetch(
+      `https://tw.newlogin.beanfun.com/generic_handlers/erase_token.ashx`,
+      {
+        method: "POST",
+        body: new URLSearchParams({ web_token: "1" }).toString(),
+      }
+    )
+
+    return true
+  } catch (err) {
+    return false
+  }
+}
+
 function getCurrentTime(method: number = 0): string {
   const date = new Date()
 
@@ -327,4 +352,4 @@ async function getCreateTime(
   return match[1]
 }
 
-export { getAccounts, getOTP }
+export { getAccounts, getOTP, signOut }

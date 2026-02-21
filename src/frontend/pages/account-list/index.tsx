@@ -1,4 +1,4 @@
-import { ServiceAccount } from "@/backend/services/account"
+import { ServiceAccount } from "@/backend/services/auth"
 import { useAuth } from "@/frontend/contexts/AuthContext"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router"
@@ -48,7 +48,7 @@ const mockGetAccountsResult = {
 
 export function AccountListPage() {
   const navigate = useNavigate()
-  const { accountList } = useAuth()
+  const { accountList, signOut } = useAuth()
   // const accountList = mockGetAccountsResult
   const [otp, setOtp] = useState<string>("")
   const [selectedAccount, setSelectedAccount] = useState<
@@ -92,7 +92,7 @@ export function AccountListPage() {
 
   return (
     <div className="account">
-      <button className="account__signout" onClick={() => {}}>
+      <button className="account__signout" onClick={signOut}>
         登出
       </button>
       <ul className="account__list">

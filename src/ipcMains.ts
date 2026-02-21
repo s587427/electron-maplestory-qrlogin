@@ -4,13 +4,14 @@ import {
   GetAccountsResult,
   getOTP,
   ServiceAccount,
-} from "./backend/services/account"
+  signOut,
+} from "./backend/services/auth"
 import {
   getQRCodeImage,
   getQRCodeValue,
   getSessionKey,
   postQRCodeLogin,
-} from "./backend/services/login"
+} from "./backend/services/qrcode"
 import { IpcResponse } from "./types/response"
 
 export async function registerIpcMains() {
@@ -80,6 +81,14 @@ export async function registerIpcMains() {
       }
     }
   )
+
+  ipcMain.handle("sign-out", async (): Promise<IpcResponse<boolean>> => {
+    const result = await signOut()
+    return {
+      message: result ? "signout successful" : "signout failed",
+      data: result,
+    }
+  })
 
   ipcMain.handle(
     "get:otp",
