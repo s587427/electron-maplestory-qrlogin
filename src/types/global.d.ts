@@ -19,5 +19,9 @@ declare global {
       maximize: () => void
       close: () => void
     }
+    store: {
+      get: <T = unknown>(key: string) => Promise<T>
+      set: (key: string, value: unknown) => Promise<void>
+    }
   }
 }

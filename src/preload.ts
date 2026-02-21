@@ -4,6 +4,9 @@
 import { contextBridge, ipcRenderer } from "electron"
 import { ServiceAccount } from "./backend/services/auth"
 
+// invoke return Promise
+// on void
+
 contextBridge.exposeInMainWorld("versions", {
   node: () => process.versions.node,
   chrome: () => process.versions.chrome,
@@ -28,4 +31,10 @@ contextBridge.exposeInMainWorld("win", {
   minimize: () => ipcRenderer.send("window:minimize"),
   maximize: () => ipcRenderer.send("window:maximize"),
   close: () => ipcRenderer.send("window:close"),
+})
+
+contextBridge.exposeInMainWorld("store", {
+  get: (key: string) => ipcRenderer.invoke("stroe:get", key),
+  set: (key: string, value: unknown) =>
+    ipcRenderer.invoke("stroe:set", key, value),
 })

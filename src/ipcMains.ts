@@ -1,4 +1,5 @@
 import { BrowserWindow, ipcMain } from "electron"
+import Store from "electron-store"
 import { qrcodeManager, QRCodeStatus } from "./backend/classes/QRCodeManager"
 import {
   GetAccountsResult,
@@ -13,6 +14,9 @@ import {
   postQRCodeLogin,
 } from "./backend/services/qrcode"
 import { IpcResponse } from "./types/response"
+
+const store = new Store()
+//  console.log(stroe.path)
 
 export async function registerIpcMains() {
   // ons
@@ -105,4 +109,11 @@ export async function registerIpcMains() {
       }
     }
   )
+
+  ipcMain.handle("stroe:get", async (event, key: string) => {
+    return store.get(key)
+  })
+  ipcMain.handle("stroe:set", async (event, key: string, value: unknown) => {
+    store.set(key, value)
+  })
 }

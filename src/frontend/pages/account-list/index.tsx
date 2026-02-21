@@ -60,6 +60,21 @@ export function AccountListPage() {
     if (!accountList) {
       navigate("/")
     }
+
+    autoSelectAccount()
+
+    async function autoSelectAccount() {
+      const preSelectAccountId =
+        await window.store.get<string>("preSelectAccountId")
+      const account = accountList?.accountList.find(
+        (account) => account.id === preSelectAccountId
+      )
+      if (account && accountList?.accountList.length > 0) {
+        account
+          ? handleClickAccount(account)
+          : handleClickAccount(accountList?.accountList[0])
+      }
+    }
   }, [accountList])
 
   async function handleClickFetchOtp() {
@@ -87,6 +102,7 @@ export function AccountListPage() {
 
   function handleClickAccount(account: ServiceAccount) {
     setSelectedAccount(account)
+    window.store.set("preSelectAccountId", account.id)
     navigator.clipboard.writeText(account.id)
   }
 
