@@ -67,23 +67,23 @@
   gap: 4px;
 }
 
-.author-info__contact .info {
+.author-info__contact-item {
   display: flex;
   align-items: center;
   gap: 4px;
 }
 
-.author-info__contact .info-icon {
+.author-info__contact-icon {
   width: 14px;
   height: 14px;
 }
 
-.author-info__contact .info-link {
+.author-info__contact-link {
   cursor: pointer;
   -webkit-app-region: no-drag;
   app-region: no-drag;
 }
 
-.author-info__contact .info-link:hover {
+.author-info__contact-link:hover {
   color: #999;
 }

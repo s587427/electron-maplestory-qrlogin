@@ -1,5 +1,5 @@
-import MailIcon from "@/frontend/assets/icons/mail-icon"
-import GithubIcon from "@/frontend/assets/icons/github-icon"
+import MailIcon from "@/frontend/components/Icons/MailIcon"
+import GithubIcon from "@/frontend/components/Icons/GithubIcon"
 import { SetStateAction } from "react"
 import "./index.css"
 
@@ -32,16 +32,19 @@ export function AuthorInfo({ setIsShowAuthorInfo }: AuthorInfoProps) {
         <div className="author-info__contact">
           <p className="text">Contact</p>
           <div className="author-info__contact-links">
-            <p className="text info">
-              <MailIcon className="info-icon" />
-              <a className="text info-link" href="mailto:abc@gmail.com">
+            <div className="author-info__contact-item">
+              <MailIcon className="author-info__contact-icon" />
+              <a
+                className="text author-info__contact-link"
+                href="mailto:abc@gmail.com"
+              >
                 聯繫開發者
               </a>
-            </p>
-            <p className="text info">
-              <GithubIcon className="info-icon" />
+            </div>
+            <div className="author-info__contact-item">
+              <GithubIcon className="author-info__contact-icon" />
               <a
-                className="text info-link"
+                className="text author-info__contact-link"
                 href="https://github.com/s587427"
                 onClick={(e) => {
                   e.preventDefault()
@@ -50,7 +53,7 @@ export function AuthorInfo({ setIsShowAuthorInfo }: AuthorInfoProps) {
               >
                 GitHub
               </a>
-            </p>
+            </div>
           </div>
         </div>
       </section>
