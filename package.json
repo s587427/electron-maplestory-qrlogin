@@ -1,6 +1,6 @@
 {
   "name": "electron-maplestory-qrlogin",
-  "productName": "electron-maplestory-qrlogin",
+  "productName": "MapleStoryQRLogin",
   "version": "1.0.0",
   "description": "My Electron application description",
   "main": ".vite/build/main.js",
