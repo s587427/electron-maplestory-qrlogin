@@ -97,3 +97,38 @@
   cursor: pointer;
   app-region: no-drag;
 }
+
+/* dialog */
+.dialog.signout-dialog {
+  width: 210px;
+  margin: auto;
+}
+
+.dialog__descriptions {
+  margin-bottom: 24px;
+  text-align: center;
+  color: #fff;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 150%; /* 24px */
+  letter-spacing: 0.8px;
+}
+
+.dialog__buttons {
+  display: flex;
+  justify-content: space-between;
+}
+.dialog__buttons .signout {
+  width: 93px;
+  height: 22px;
+  font-size: 12px;
+  line-height: 22px;
+}
+
+.dialog__buttons .return {
+  width: 93px;
+  height: 22px;
+  font-size: 12px;
+  line-height: 22px;
+}

@@ -55,6 +55,7 @@ export function AccountListPage() {
     ServiceAccount | undefined
   >(undefined)
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isShowDialogSignOut, setIsShowDialogSignOut] = useState<boolean>(false)
 
   useEffect(() => {
     if (!accountList) {
@@ -113,39 +114,67 @@ export function AccountListPage() {
 
   return (
     <div className="account">
-      <button className="account__signout btn btn-white" onClick={signOut}>
-        登出
-      </button>
-      <ul className="account__list">
-        {accountList?.accountList.map((account) => (
-          <li key={account.id}>
-            <span
-              data-id={account.id}
-              className={selectedAccount?.id === account.id ? "selected" : ""}
-              onClick={() => handleClickAccount(account)}
+      {!isShowDialogSignOut ? (
+        <>
+          <button
+            className="account__signout btn btn-white"
+            onClick={() => setIsShowDialogSignOut(true)}
+          >
+            登出
+          </button>
+          <ul className="account__list">
+            {accountList?.accountList.map((account) => (
+              <li key={account.id}>
+                <span
+                  data-id={account.id}
+                  className={
+                    selectedAccount?.id === account.id ? "selected" : ""
+                  }
+                  onClick={() => handleClickAccount(account)}
+                >
+                  {account.id}
+                </span>
+              </li>
+            ))}
+          </ul>
+
+          <div
+            className="account__password-detail"
+            onClick={() => {
+              navigator.clipboard.writeText(otp)
+            }}
+          >
+            {otp}
+          </div>
+
+          <button
+            className="account__password-btn btn btn-orange"
+            disabled={isLoading}
+            onClick={handleClickFetchOtp}
+          >
+            獲取密碼
+          </button>
+        </>
+      ) : (
+        <div className="dialog signout-dialog">
+          <div className="dialog__descriptions">
+            <p>即將登出</p>
+            <p>是否要繼續？</p>
+          </div>
+
+          <div className="dialog__buttons">
+            <button className="signout btn btn-white" onClick={signOut}>
+              登出
+            </button>
+            <button
+              className="return btn btn-gray"
+              onClick={() => setIsShowDialogSignOut(false)}
             >
-              {account.id}
-            </span>
-          </li>
-        ))}
-      </ul>
-
-      <div
-        className="account__password-detail"
-        onClick={() => {
-          navigator.clipboard.writeText(otp)
-        }}
-      >
-        {otp}
-      </div>
-
-      <button
-        className="account__password-btn btn btn-orange"
-        disabled={isLoading}
-        onClick={handleClickFetchOtp}
-      >
-        獲取密碼
-      </button>
+              返回
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
