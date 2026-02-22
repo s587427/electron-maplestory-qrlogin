@@ -74,6 +74,7 @@ export function QRCodeLoingPage() {
   }
 
   async function updateQRCodeBlob() {
+    if (isLoading) return
     setQRCodeStatusState(-1)
     setIsloading(true)
     try {
@@ -92,12 +93,17 @@ export function QRCodeLoingPage() {
   return (
     <div className="qr-login">
       <h1 className="qr-login__title">Gama Play | Login</h1>
-      <img className="qr-login__img" src={imgSrc} alt="qrcode" />
+      <img
+        className="qr-login__img"
+        src={imgSrc}
+        alt="qrcode"
+        onClick={updateQRCodeBlob}
+      />
       {qrcodeStatusState === -2 && (
         <button
           className="qr-login__refresh"
-          onClick={updateQRCodeBlob}
-          disabled={isLoading}
+          // onClick={updateQRCodeBlob}
+          // disabled={isLoading}
         >
           點擊刷新條碼
         </button>
