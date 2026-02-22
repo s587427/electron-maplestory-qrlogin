@@ -1,0 +1,73 @@
+.author-info-wrapper {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+
+  height: inherit;
+  width: 257px; /* 435 - 178 */
+  margin-left: auto;
+  /* app-region: no-drag; */
+  /* user-select: text; */
+}
+
+.author-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  margin-top: 48px;
+  margin-bottom: 13px;
+  padding: 22px 18px;
+
+  width: 213px;
+  height: 219px;
+
+  border-radius: 10px;
+  border: 1px solid #999;
+  background: #fff;
+}
+
+.author-info__title {
+  color: #000;
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: 0.32px;
+  font-family: "Noto Sans TC";
+  line-height: 1.187;
+}
+
+.author-info__sub-title {
+}
+.author-info__sub-title .text-orange {
+  color: #ff9930;
+  font-size: 12px;
+  letter-spacing: 0.24px;
+  line-height: 1.16;
+}
+
+.author-info__sub-title .text-gray {
+  color: #999;
+  font-size: 12px;
+  letter-spacing: 0.24px;
+  line-height: 1.16;
+}
+
+.author-info__content {
+  line-height: 1.16;
+}
+
+.author-info__content .text,
+.author-info__contact .text {
+  color: #000;
+  font-size: 12px;
+  letter-spacing: 0.24px;
+}
+
+.author-info__contact .mail-icon {
+  width: 14px;
+  height: 14px;
+  margin-right: 4px;
+  margin-top: -3px;
+  display: inline-block;
+  vertical-align: middle;
+}
