@@ -14,7 +14,7 @@ const mapQRCodeStatusMsg: Record<QRCodeStatus, string> = {
 export function QRCodeLoingPage() {
   const navigate = useNavigate()
 
-  const [isLoading, setIsloading] = useState<boolean>(true)
+  const [isLoading, setIsloading] = useState<boolean>(false)
   const [qrcodeBolb, setQRCodBlob] = useState<BlobPart>(null)
   const [qrcodeStatusState, setQRCodeStatusState] = useState<QRCodeStatus>(-1) // -1 default -2 expired  1 pass
   const refreshImgSrc = "https://tw.newlogin.beanfun.com/images/refresh.png"
