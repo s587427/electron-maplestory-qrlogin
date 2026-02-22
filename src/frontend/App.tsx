@@ -2,11 +2,11 @@ import { useState } from "react"
 import { Route, Routes } from "react-router"
 import "./App.css"
 import { ToolBar } from "./components/ToolBar"
-import { AuthorInfo } from "./pages/author-info"
 import { AccountListPage } from "./pages/account-list"
+import { AuthorInfo } from "./pages/author-info"
 import { QRCodeLoingPage } from "./pages/qrcode-login"
 export default function App() {
-  const [isShowAuthorInfo, setIsShowAuthorInfo] = useState<boolean>(true)
+  const [isShowAuthorInfo, setIsShowAuthorInfo] = useState<boolean>(false)
 
   return (
     <div className="layout">
