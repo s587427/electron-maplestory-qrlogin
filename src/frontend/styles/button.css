@@ -1,0 +1,42 @@
+.btn {
+  cursor: pointer;
+  border: none;
+  border-radius: 14px;
+  width: 213px;
+  height: 28px;
+
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.28px;
+  font-family: inherit;
+
+  transition: all 0.2s;
+}
+
+.btn-orange {
+  background-color: #ff9930;
+  color: #fff;
+}
+
+.btn-orange:hover {
+  background-color: #ffe0c0;
+}
+
+.btn-white {
+  background-color: #fff;
+  color: #ff9930;
+}
+
+.btn-white:hover {
+  background-color: #ffe0c0;
+  color: #fff;
+}
+
+.btn-gray {
+  background-color: #999;
+  color: #fff;
+}
+
+.btn-gray:hover {
+  background-color: #ccc;
+}

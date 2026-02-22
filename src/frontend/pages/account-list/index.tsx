@@ -61,7 +61,9 @@ export function AccountListPage() {
       navigate("/")
     }
 
-    autoSelectAccount()
+    if (accountList && accountList?.accountList) {
+      autoSelectAccount()
+    }
 
     async function autoSelectAccount() {
       const preSelectAccountId =
@@ -71,8 +73,8 @@ export function AccountListPage() {
       )
       if (account && accountList?.accountList.length > 0) {
         account
-          ? handleClickAccount(account)
-          : handleClickAccount(accountList?.accountList[0])
+          ? handleClickAccount(account, false)
+          : handleClickAccount(accountList?.accountList[0], false)
       }
     }
   }, [accountList])
@@ -100,21 +102,25 @@ export function AccountListPage() {
     }
   }
 
-  function handleClickAccount(account: ServiceAccount) {
+  function handleClickAccount(
+    account: ServiceAccount,
+    isCopay: boolean = true
+  ) {
     setSelectedAccount(account)
     window.store.set("preSelectAccountId", account.id)
-    navigator.clipboard.writeText(account.id)
+    if (isCopay) navigator.clipboard.writeText(account.id)
   }
 
   return (
     <div className="account">
-      <button className="account__signout" onClick={signOut}>
+      <button className="account__signout btn btn-white" onClick={signOut}>
         登出
       </button>
       <ul className="account__list">
         {accountList?.accountList.map((account) => (
           <li key={account.id}>
             <span
+              data-id={account.id}
               className={selectedAccount?.id === account.id ? "selected" : ""}
               onClick={() => handleClickAccount(account)}
             >
@@ -134,7 +140,7 @@ export function AccountListPage() {
       </div>
 
       <button
-        className="account__password-btn"
+        className="account__password-btn btn btn-orange"
         disabled={isLoading}
         onClick={handleClickFetchOtp}
       >
