@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from "electron"
+import { app, BrowserWindow, Menu } from "electron"
 import started from "electron-squirrel-startup"
 import path from "node:path"
 import { registerIpcMains } from "./ipcMains"
@@ -32,6 +32,11 @@ const createWindow = () => {
     mainWindow.loadFile(
       path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`)
     )
+  }
+
+  if (app.isPackaged) {
+    // Electron 預設 menu 有 DevTools 選項
+    Menu.setApplicationMenu(null)
   }
 
   // Open the DevTools.
