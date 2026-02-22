@@ -6,8 +6,6 @@
   height: inherit;
   width: 257px; /* 435 - 178 */
   margin-left: auto;
-  /* app-region: no-drag; */
-  /* user-select: text; */
 }
 
 .author-info {
@@ -63,11 +61,29 @@
   letter-spacing: 0.24px;
 }
 
-.author-info__contact .mail-icon {
+.author-info__contact-links {
+  display: flex;
+  justify-content: start;
+  gap: 4px;
+}
+
+.author-info__contact .info {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.author-info__contact .info-icon {
   width: 14px;
   height: 14px;
-  margin-right: 4px;
-  margin-top: -3px;
-  display: inline-block;
-  vertical-align: middle;
+}
+
+.author-info__contact .info-link {
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+  app-region: no-drag;
+}
+
+.author-info__contact .info-link:hover {
+  color: #999;
 }
