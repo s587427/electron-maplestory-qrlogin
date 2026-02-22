@@ -22,7 +22,7 @@
 }
 
 .qr-login__refresh {
-  cursor: pointer;
+  cursor: default;
   background-color: transparent;
   border: none;
   color: #000;

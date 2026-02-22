@@ -32,8 +32,10 @@ body {
   app-region: drag;
 }
 
-button {
+button,
+img {
   app-region: no-drag;
+  cursor: pointer;
 }
 
 .layout {

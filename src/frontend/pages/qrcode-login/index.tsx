@@ -97,7 +97,7 @@ export function QRCodeLoingPage() {
         className="qr-login__img"
         src={imgSrc}
         alt="qrcode"
-        onClick={updateQRCodeBlob}
+        onClick={qrcodeStatusState === -2 ? updateQRCodeBlob : () => {}}
       />
       {qrcodeStatusState === -2 && (
         <button
