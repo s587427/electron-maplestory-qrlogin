@@ -23,7 +23,7 @@ contextBridge.exposeInMainWorld("api", {
   signOut: () => ipcRenderer.invoke("sign-out"),
   getOtp: (serviceAccount: ServiceAccount) =>
     ipcRenderer.invoke("get:otp", serviceAccount),
-  // we can also expose variables, not just functions
+  openExternal: (url: string) => ipcRenderer.invoke("openExternal", url),
 })
 
 contextBridge.exposeInMainWorld("win", {

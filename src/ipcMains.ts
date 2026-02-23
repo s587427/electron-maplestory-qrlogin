@@ -1,4 +1,4 @@
-import { BrowserWindow, ipcMain } from "electron"
+import { BrowserWindow, ipcMain, shell } from "electron"
 import Store from "electron-store"
 import { qrcodeManager, QRCodeStatus } from "./backend/classes/QRCodeManager"
 import {
@@ -41,6 +41,8 @@ export async function registerIpcMains() {
   })
 
   // handles
+  ipcMain.handle("openExternal", (_, url: string) => shell.openExternal(url))
+
   ipcMain.handle(
     "get:qrcode",
     async (): Promise<IpcResponse<Buffer | undefined>> => {

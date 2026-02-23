@@ -12,6 +12,7 @@ declare global {
       postQRCodeLogin: () => Promise<IpcResponse<GetAccountsResult>>
       getOtp: (serviceAccount: ServiceAccount) => Promise<IpcResponse>
       signOut: () => Promise<IpcResponse<boolean>>
+      openExternal: (url: string) => Promise<void>
     }
     win: {
       info: () => void
