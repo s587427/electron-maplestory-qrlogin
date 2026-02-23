@@ -1,5 +1,5 @@
-import MailIcon from "@/frontend/components/Icons/MailIcon"
 import GithubIcon from "@/frontend/components/Icons/GithubIcon"
+import MailIcon from "@/frontend/components/Icons/MailIcon"
 import { SetStateAction } from "react"
 import "./index.css"
 
@@ -7,7 +7,7 @@ type AuthorInfoProps = {
   setIsShowAuthorInfo: React.Dispatch<SetStateAction<boolean>>
 }
 
-export function AuthorInfo({ setIsShowAuthorInfo }: AuthorInfoProps) {
+export function AuthorInfoPage({ setIsShowAuthorInfo }: AuthorInfoProps) {
   return (
     <div className="author-info-wrapper">
       <section className="author-info">
@@ -31,29 +31,23 @@ export function AuthorInfo({ setIsShowAuthorInfo }: AuthorInfoProps) {
 
         <div className="author-info__contact">
           <p className="text">Contact</p>
-          <div className="author-info__contact-links">
-            <div className="author-info__contact-item">
-              <MailIcon className="author-info__contact-icon" />
-              <a
-                className="text author-info__contact-link"
-                href="mailto:abc@gmail.com"
-              >
-                聯繫開發者
-              </a>
-            </div>
-            <div className="author-info__contact-item">
-              <GithubIcon className="author-info__contact-icon" />
-              <a
-                className="text author-info__contact-link"
-                href="https://github.com/s587427"
-                onClick={(e) => {
-                  e.preventDefault()
-                  window.api.openExternal("https://github.com/s587427")
-                }}
-              >
-                GitHub
-              </a>
-            </div>
+          <div className="social-links">
+            <a className="social-link" href="mailto:abc@gmail.com">
+              <MailIcon className="social-link__icon" />
+              <span className="social-link__text">聯繫開發者</span>
+            </a>
+
+            <a
+              className="social-link"
+              href="https://github.com/s587427"
+              onClick={(e) => {
+                e.preventDefault()
+                window.api.openExternal("https://github.com/s587427")
+              }}
+            >
+              <GithubIcon className="social-link__icon" />
+              <span className="social-link__text">GitHub</span>
+            </a>
           </div>
         </div>
       </section>

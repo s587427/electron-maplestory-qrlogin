@@ -61,29 +61,35 @@
   letter-spacing: 0.24px;
 }
 
-.author-info__contact-links {
+.social-links {
+  app-region: no-drag;
   display: flex;
-  justify-content: start;
   gap: 4px;
 }
 
-.author-info__contact-item {
+.social-link {
   display: flex;
   align-items: center;
   gap: 4px;
+
+  color: #000;
+  font-size: 12px;
+  letter-spacing: 0.24px;
 }
 
-.author-info__contact-icon {
+.social-link:active {
+  color: #000;
+}
+
+.social-link:visited {
+  color: #000;
+}
+
+.social-link:hover span {
+  color: #999;
+}
+
+.social-link__icon {
   width: 14px;
   height: 14px;
-}
-
-.author-info__contact-link {
-  cursor: pointer;
-  -webkit-app-region: no-drag;
-  app-region: no-drag;
-}
-
-.author-info__contact-link:hover {
-  color: #999;
 }

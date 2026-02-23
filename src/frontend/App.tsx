@@ -3,7 +3,7 @@ import { Route, Routes } from "react-router"
 import "./App.css"
 import { ToolBar } from "./components/ToolBar"
 import { AccountListPage } from "./pages/account-list"
-import { AuthorInfo } from "./pages/author-info"
+import { AuthorInfoPage } from "./pages/author-info"
 import { QRCodeLoingPage } from "./pages/qrcode-login"
 export default function App() {
   const [isShowAuthorInfo, setIsShowAuthorInfo] = useState<boolean>(false)
@@ -21,7 +21,7 @@ export default function App() {
           </Routes>
         </main>
         {isShowAuthorInfo && (
-          <AuthorInfo setIsShowAuthorInfo={setIsShowAuthorInfo} />
+          <AuthorInfoPage setIsShowAuthorInfo={setIsShowAuthorInfo} />
         )}
       </>
     </div>
