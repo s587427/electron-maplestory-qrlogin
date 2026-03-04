@@ -1,12 +1,14 @@
 <!doctype html>
 <html>
   <head>
-    <meta charset="UTF-8" />
+    <meta
+      charset="UTF-8"
+      http-equiv="Content-Security-Policy"
+      content="script-src 'self'"
+    />
     <title>Maple QR Login</title>
   </head>
   <body>
-    <!-- <h1>💖 Hello World!</h1>
-    <p>Welcome to your Electron application.</p> -->
     <div id="root"></div>
     <script type="module" src="/src/renderer.tsx"></script>
   </body>
