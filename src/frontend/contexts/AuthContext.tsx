@@ -4,6 +4,7 @@ import {
   Dispatch,
   SetStateAction,
   useContext,
+  useEffect,
   useState,
 } from "react"
 import { useNavigate } from "react-router"
@@ -15,12 +16,32 @@ type AuthContextType = {
   setAccountList: Dispatch<SetStateAction<GetAccountsResult>>
 }
 
+const REFRESH_TOKEN_MINUTE = 9
 const AuthContext = createContext<AuthContextType | null>(null)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate()
 
   const [accountList, setAccountList] = useState<GetAccountsResult | null>(null)
+
+  useEffect(() => {
+    const pingTokenTimer = setInterval(
+      () => {
+        if (accountList) {
+          console.log("call pinToken")
+          window.api
+            .pinToken()
+            .then((text) => console.log(text))
+            .catch((error) => console.log("pingToken error: ", error))
+        }
+      },
+      1000 * 60 * REFRESH_TOKEN_MINUTE
+    )
+
+    return () => {
+      clearInterval(pingTokenTimer)
+    }
+  }, [accountList])
 
   async function signIn() {
     const { error, data, message } = await window.api.postQRCodeLogin()

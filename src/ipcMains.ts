@@ -4,6 +4,7 @@ import { qrcodeManager, QRCodeStatus } from "./backend/classes/QRCodeManager"
 import {
   GetAccountsResult,
   getOTP,
+  pingToken,
   ServiceAccount,
   signOut,
 } from "./backend/services/auth"
@@ -108,6 +109,22 @@ export async function registerIpcMains() {
         return { message: "success", data: res }
       } catch (error) {
         return { error: true, message: error.message }
+      }
+    }
+  )
+
+  ipcMain.handle(
+    "get:pinToken",
+    async (ipcMainInvokeEvent): Promise<IpcResponse> => {
+      try {
+        // console.log("getOTP: ", serviceAccount)
+        const res = await pingToken()
+        return { message: "success", data: res }
+      } catch (error) {
+        if (error instanceof Error) {
+          return { error: true, message: error.message }
+        }
+        return { error: true, message: "unknown error" }
       }
     }
   )

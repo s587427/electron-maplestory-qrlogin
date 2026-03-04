@@ -23,6 +23,7 @@ contextBridge.exposeInMainWorld("api", {
   signOut: () => ipcRenderer.invoke("sign-out"),
   getOtp: (serviceAccount: ServiceAccount) =>
     ipcRenderer.invoke("get:otp", serviceAccount),
+  pinToken: () => ipcRenderer.invoke("get:pinToken"),
   openExternal: (url: string) => ipcRenderer.invoke("openExternal", url),
 })
 

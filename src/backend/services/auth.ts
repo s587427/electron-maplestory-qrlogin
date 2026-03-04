@@ -293,6 +293,14 @@ async function signOut() {
   }
 }
 
+async function pingToken() {
+  const reponse = await beanfunFetch(
+    `https://tw.beanfun.com/beanfun_block/generic_handlers/echo_token.ashx?webtoken=1`
+  )
+  const htmlStr = await reponse.text()
+  return htmlStr
+}
+
 function getCurrentTime(method: number = 0): string {
   const date = new Date()
 
@@ -352,4 +360,4 @@ async function getCreateTime(
   return match[1]
 }
 
-export { getAccounts, getOTP, signOut }
+export { getAccounts, getOTP, pingToken, signOut }
