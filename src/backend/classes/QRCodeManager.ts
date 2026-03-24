@@ -34,18 +34,27 @@ class QRCodeManager implements IQRCodeManager {
       payload.append("status", value)
 
       const response = await beanfunFetch(
-        "https://tw.newlogin.beanfun.com/generic_handlers/CheckLoginStatus.ashx",
+        "https://login.beanfun.com/QRLogin/CheckLoginStatus",
         {
-          referrer: `https://tw.newlogin.beanfun.com/login/qr_form.aspx?skey=${skey}`,
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-          method: "POST",
-          body: payload.toString(),
+          referrer: `https://login.beanfun.com/Login/Index?pSKey=${skey}`,
+          method: "GET",
         }
       )
 
       const jsonData = await response.json()
+
+      // response
+      //       {
+      //     "Result": 0,
+      //     "__APICheckFlag": "",
+      //     "APIVersion": "1",
+      //     "ErrorSeqNum": 0,
+      //     "StatusCode": 0,
+      //     "ResultCode": 2,
+      //     "ResultMessageCode": 9999,
+      //     "LogMessage": "Failed",
+      //     "ResultMessage": "Failed"
+      // }
 
       const result: string = jsonData["ResultMessage"]
       console.log("QR Check result:", result)

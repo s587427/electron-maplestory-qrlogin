@@ -15,7 +15,7 @@ export function QRCodeLoingPage() {
   const navigate = useNavigate()
 
   const [isLoading, setIsloading] = useState<boolean>(false)
-  const [qrcodeBolb, setQRCodBlob] = useState<BlobPart>(null)
+  const [qrcodeImage, setQRCodeImage] = useState<string>(null)
   const [qrcodeStatusState, setQRCodeStatusState] = useState<QRCodeStatus>(-1) // -1 default -2 expired  1 pass
   const refreshImgSrc = "https://tw.newlogin.beanfun.com/images/refresh.png"
 
@@ -23,15 +23,15 @@ export function QRCodeLoingPage() {
   const { signIn } = useAuth()
 
   useEffect(() => {
-    updateQRCodeBlob()
+    updateQRCodeImage()
   }, [])
 
   useEffect(() => {
     let clearTimerFn = null
-    if (qrcodeBolb) {
-      const blob = new Blob([qrcodeBolb], { type: "image/png" })
-      const imageUrl = URL.createObjectURL(blob)
-      setImgSrc(imageUrl)
+    if (qrcodeImage) {
+      // const blob = new Blob([qrcodeImage], { type: "image/png" })
+      // const imageUrl = URL.createObjectURL(blob)
+      setImgSrc(`data:image/png;base64,${qrcodeImage}`)
 
       // start check login status
       clearTimerFn = checkQRCodeLoginStatusTimer()
@@ -41,7 +41,7 @@ export function QRCodeLoingPage() {
         clearTimerFn()
       }
     }
-  }, [qrcodeBolb])
+  }, [qrcodeImage])
 
   useEffect(() => {
     if (qrcodeStatusState === 1) {
@@ -73,19 +73,19 @@ export function QRCodeLoingPage() {
     }
   }
 
-  async function updateQRCodeBlob() {
+  async function updateQRCodeImage() {
     if (isLoading) return
     setQRCodeStatusState(-1)
     setIsloading(true)
     try {
-      const { data: blob, error, message } = await window.api.getQRCode()
+      const { data: base64, error, message } = await window.api.getQRCode()
       if (!error) {
-        setQRCodBlob(blob)
+        setQRCodeImage(base64)
       } else {
-        console.log("updateQRCodeBlob error: ", message)
+        console.log("updateQRCodeImage error: ", message)
       }
     } catch (error) {
-      console.log("updateQRCodeBlob error", error)
+      console.log("updateQRCodeImage error", error)
     }
     setIsloading(false)
   }
@@ -97,12 +97,12 @@ export function QRCodeLoingPage() {
         className="qr-login__img"
         src={imgSrc}
         alt="qrcode"
-        onClick={qrcodeStatusState === -2 ? updateQRCodeBlob : () => {}}
+        onClick={qrcodeStatusState === -2 ? updateQRCodeImage : () => {}}
       />
       {qrcodeStatusState === -2 && (
         <button
           className="qr-login__refresh"
-          // onClick={updateQRCodeBlob}
+          // onClick={updateQRCodeImage}
           // disabled={isLoading}
         >
           點擊刷新條碼

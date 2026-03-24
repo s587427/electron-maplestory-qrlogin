@@ -3,17 +3,13 @@ import Store from "electron-store"
 import { qrcodeManager, QRCodeStatus } from "./backend/classes/QRCodeManager"
 import {
   GetAccountsResult,
+  getInitLogin,
   getOTP,
   pingToken,
   ServiceAccount,
   signOut,
 } from "./backend/services/auth"
-import {
-  getQRCodeImage,
-  getQRCodeValue,
-  getSessionKey,
-  postQRCodeLogin,
-} from "./backend/services/qrcode"
+import { getQRCodeLogin, getSessionKey } from "./backend/services/qrcode"
 import { IpcResponse } from "./types/response"
 
 const store = new Store()
@@ -46,21 +42,31 @@ export async function registerIpcMains() {
 
   ipcMain.handle(
     "get:qrcode",
-    async (): Promise<IpcResponse<Buffer | undefined>> => {
+    async (): Promise<IpcResponse<string | undefined>> => {
       const skey = await getSessionKey()
-      const qrcodeValue = await getQRCodeValue(skey)
+      // const qrcodeValue = await getQRCodeValue(skey)
+      // if (qrcodeValue == null) {
+      //   return { error: true, message: "beanfun server error" }
+      // }
+      const initLoginData = await getInitLogin(skey)
+      const {
+        QRImage,
+        IsHK,
+        IsRecaptcha,
+        RecaptchaV2PublicKey,
+        IsOTP,
+        DeepLink,
+      } = initLoginData.ResultData
 
-      if (qrcodeValue == null) {
-        return { error: true, message: "beanfun server error" }
-      }
+      qrcodeManager.skey = skey
+      // qrcodeManager.viewstate = qrcodeValue.viewstate
+      // qrcodeManager.bitmapUrl = qrcodeValue.bitmapUrl
+      // qrcodeManager.eventvalidation = qrcodeValue.eventvalidation
+      // qrcodeManager.value = qrcodeValue.value
 
-      qrcodeManager.skey = qrcodeValue.skey
-      qrcodeManager.viewstate = qrcodeValue.viewstate
-      qrcodeManager.bitmapUrl = qrcodeValue.bitmapUrl
-      qrcodeManager.eventvalidation = qrcodeValue.eventvalidation
-      qrcodeManager.value = qrcodeValue.value
-      const arraybuffer = await getQRCodeImage(qrcodeManager)
-      return { message: "success", data: arraybuffer }
+      // 新版改成base64
+      // const arraybuffer = await getQRCodeImage(qrcodeManager)
+      return { message: "success", data: QRImage }
     }
   )
 
@@ -81,7 +87,7 @@ export async function registerIpcMains() {
     "post:qrcodeLogin",
     async (): Promise<IpcResponse<GetAccountsResult>> => {
       try {
-        const accountList = await postQRCodeLogin(qrcodeManager)
+        const accountList = await getQRCodeLogin(qrcodeManager)
         return { message: "success", data: accountList }
       } catch (error) {
         return { error: true, message: error.message }

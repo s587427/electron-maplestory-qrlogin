@@ -7,7 +7,7 @@ export {}
 declare global {
   interface Window {
     api: {
-      getQRCode: () => Promise<IpcResponse<BlobPart | undefined>>
+      getQRCode: () => Promise<IpcResponse<string | undefined>>
       getQRCodeStatus: () => Promise<IpcResponse<QRCodeStatus>>
       postQRCodeLogin: () => Promise<IpcResponse<GetAccountsResult>>
       getOtp: (serviceAccount: ServiceAccount) => Promise<IpcResponse>

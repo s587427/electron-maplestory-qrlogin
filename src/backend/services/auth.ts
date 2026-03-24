@@ -1,3 +1,4 @@
+import { GetInitLoginResponse } from "@/types/response"
 import crypto from "crypto"
 import { session } from "electron"
 import { beanfunFetch } from "./request"
@@ -34,6 +35,7 @@ async function getAccounts(
   )
 
   const htmlStr = await response.text()
+  // console.log("htmlStr: ", htmlStr)
 
   // 抓帳號列表
   const accountRegex =
@@ -301,6 +303,17 @@ async function pingToken() {
   return htmlStr
 }
 
+async function getInitLogin(pSkey: string): Promise<GetInitLoginResponse> {
+  const reponse = await beanfunFetch(
+    `https://login.beanfun.com/Login/InitLogin`,
+    {
+      referrer: `https://login.beanfun.com/Login/Index?pSKey=${pSkey}`,
+    }
+  )
+  const responseJson = await reponse.json()
+  return responseJson
+}
+
 function getCurrentTime(method: number = 0): string {
   const date = new Date()
 
@@ -360,4 +373,4 @@ async function getCreateTime(
   return match[1]
 }
 
-export { getAccounts, getOTP, pingToken, signOut }
+export { getAccounts, getInitLogin, getOTP, pingToken, signOut }
