@@ -27,7 +27,8 @@ export async function registerIpcMains() {
   })
 
   ipcMain.on("window:close", (event) => {
-    BrowserWindow.fromWebContents(event.sender)?.close()
+    BrowserWindow.fromWebContents(event.sender)?.hide()
+    // BrowserWindow.fromWebContents(event.sender)?.close()
   })
 
   ipcMain.on("window:maximize", (event) => {
