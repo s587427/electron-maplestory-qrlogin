@@ -1,9 +1,12 @@
 import { BrowserWindow, session } from "electron"
-import { IQRCodeManager, QRCodeManagerType } from "../classes/QRCodeManager"
+import { QRCodeManagerType } from "../classes/QRCodeManager"
 import { getAccounts } from "./auth"
 import { beanfunFetch } from "./request"
 
-async function getSessionKey(): Promise<string | null> {
+async function getQRCodeLoginWebInfo(): Promise<{
+  skey: string
+  requestVerificationToken: string
+} | null> {
   const redirectCount = 2
   return new Promise((resolve, reject) => {
     try {
@@ -18,115 +21,24 @@ async function getSessionKey(): Promise<string | null> {
 
       win.webContents.on("did-navigate", async (e, url) => {
         const response = await beanfunFetch(url)
-        // const html = await response.text()
+        const responeHtml = await response.text()
         const parsed = new URL(url)
         // console.log("url: ", url)
         c = c + 1
         if (c === redirectCount) {
           const skey = parsed.searchParams.get("pSKey")
-          resolve(skey)
+          const regex = /name="__RequestVerificationToken".*?value="([^"]+)"/
+          const match = responeHtml.match(regex)
+          const requestVerificationToken = match?.[1]
+          resolve({ skey, requestVerificationToken })
           win.destroy()
         }
       })
     } catch (error) {
-      console.log("getSessionKey error: ", error)
+      console.log("getQRCodeLoginWebInfo error: ", error)
       resolve(null)
     }
   })
-}
-
-// ! deprecated
-async function getQRCodeValue(skey: string) {
-  try {
-    // 1. Download HTML response
-
-    const response = await beanfunFetch(
-      `https://tw.newlogin.beanfun.com/login/qr_form.aspx?skey=${skey}`
-    )
-    const htmlStr = await response.text()
-
-    // 2. Extract __VIEWSTATE
-    let regex = /id="__VIEWSTATE" value="(.*)" \/>/
-
-    if (!regex.test(htmlStr)) {
-      throw new Error("LoginNoViewstate")
-    }
-
-    const viewstate = htmlStr.match(regex)[1]
-
-    // 3. Extract __EVENTVALIDATION
-    regex = /id="__EVENTVALIDATION" value="(.*)" \/>/
-
-    if (!regex.test(htmlStr)) {
-      throw new Error("LoginNoEventvalidation")
-    }
-
-    const eventvalidation = htmlStr.match(regex)[1]
-
-    // 4. Extract QR Code Hash Path
-    regex =
-      /\$\("#theQrCodeImg"\)\.attr\("src", "\.\.\/(.*)" \+ obj\.strEncryptData\);/
-
-    if (!regex.test(htmlStr)) {
-      throw new Error("LoginNoHash")
-    }
-
-    const value = htmlStr.match(regex)[1]
-
-    // 5.Get OR Code Encrypt Data
-    const strEncryptData = await getQRCodeStrEncryptData(skey)
-
-    return {
-      skey,
-      viewstate,
-      eventvalidation,
-      value: strEncryptData,
-      bitmapUrl: "https://tw.newlogin.beanfun.com/" + value,
-    }
-  } catch (err) {
-    if (err instanceof Error) {
-      console.error("getQRCodeValue error:", err.message)
-    } else {
-      console.log("Unknown error:", err)
-    }
-    return null
-  }
-}
-
-// ! deprecated
-async function getQRCodeImage(qrCodeClass: IQRCodeManager) {
-  try {
-    const url = qrCodeClass.bitmapUrl + qrCodeClass.value
-
-    const response = await beanfunFetch(url)
-    const arraybuffer = await response.arrayBuffer()
-
-    return Buffer.from(arraybuffer) // Node.js Buffer
-  } catch (err) {
-    if (err instanceof Error) {
-      console.error("getQRCodeImage error:", err.message)
-    } else {
-      console.log("Unknown error:", err)
-    }
-
-    return null
-  }
-}
-
-// ! deprecated
-async function getQRCodeStrEncryptData(skey: string) {
-  const response = await beanfunFetch(
-    `https://tw.newlogin.beanfun.com/generic_handlers/get_qrcodeData.ashx?skey=${skey}`
-  )
-  const jsonData = await response.json()
-
-  // 3. Check intResult
-  if (!jsonData.intResult || jsonData.intResult !== 1) {
-    throw new Error("LoginIntResultError")
-  }
-
-  // 4. Return strEncryptData
-  return jsonData.strEncryptData
 }
 
 async function getQRCodeLogin(
@@ -220,4 +132,4 @@ async function getQRCodeLogin(
   return accouts
 }
 
-export { getQRCodeLogin, getSessionKey }
+export { getQRCodeLogin, getQRCodeLoginWebInfo }

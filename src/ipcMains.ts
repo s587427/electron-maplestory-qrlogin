@@ -9,7 +9,10 @@ import {
   ServiceAccount,
   signOut,
 } from "./backend/services/auth"
-import { getQRCodeLogin, getSessionKey } from "./backend/services/qrcode"
+import {
+  getQRCodeLogin,
+  getQRCodeLoginWebInfo,
+} from "./backend/services/qrcode"
 import { IpcResponse } from "./types/response"
 
 const store = new Store()
@@ -44,12 +47,15 @@ export async function registerIpcMains() {
   ipcMain.handle(
     "get:qrcode",
     async (): Promise<IpcResponse<string | undefined>> => {
-      const skey = await getSessionKey()
-      // const qrcodeValue = await getQRCodeValue(skey)
-      // if (qrcodeValue == null) {
-      //   return { error: true, message: "beanfun server error" }
-      // }
+      const QRCodeLoginWebInfo = await getQRCodeLoginWebInfo()
+      if (QRCodeLoginWebInfo == null) {
+        return { error: true, message: "beanfun server error" }
+      }
+
+      const { skey, requestVerificationToken } = QRCodeLoginWebInfo
+
       const initLoginData = await getInitLogin(skey)
+      // console.log({ initLoginData })
       const {
         QRImage,
         IsHK,
@@ -60,13 +66,9 @@ export async function registerIpcMains() {
       } = initLoginData.ResultData
 
       qrcodeManager.skey = skey
-      // qrcodeManager.viewstate = qrcodeValue.viewstate
-      // qrcodeManager.bitmapUrl = qrcodeValue.bitmapUrl
-      // qrcodeManager.eventvalidation = qrcodeValue.eventvalidation
-      // qrcodeManager.value = qrcodeValue.value
+      qrcodeManager.requestVerificationToken = requestVerificationToken
 
       // 新版改成base64
-      // const arraybuffer = await getQRCodeImage(qrcodeManager)
       return { message: "success", data: QRImage }
     }
   )
