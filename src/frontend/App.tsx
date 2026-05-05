@@ -15,7 +15,7 @@ export default function App() {
       <>
         <main style={{ display: isShowAuthorInfo ? "none" : "block" }}>
           {isDev ? (
-            <div>dev..</div>
+            <div>dev..{window.app.version}</div>
           ) : (
             <Routes>
               <Route path="/" element={<QRCodeLoingPage />} />

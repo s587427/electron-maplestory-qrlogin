@@ -2,8 +2,23 @@
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 
 import { contextBridge, ipcRenderer } from "electron"
+import pkg from "../package.json"
 import { ServiceAccount } from "./backend/services/auth"
-
+import {
+  IPC_AUTH_GET_OTP,
+  IPC_AUTH_PING_TOKEN,
+  IPC_AUTH_SIGN_IN_QRCODE,
+  IPC_AUTH_SIGN_OUT,
+  IPC_QRCODE_CHECK_STATUS,
+  IPC_QRCODE_GET,
+  IPC_STORE_GET,
+  IPC_STORE_SET,
+  IPC_SYSTEM_OPEN_EXTERNAL,
+  IPC_WINDOW_CLOSE,
+  IPC_WINDOW_INFO,
+  IPC_WINDOW_MAXIMIZE,
+  IPC_WINDOW_MINIMIZE,
+} from "./const"
 // invoke return Promise
 // on void
 
@@ -12,30 +27,34 @@ contextBridge.exposeInMainWorld("versions", {
   chrome: () => process.versions.chrome,
   electron: () => process.versions.electron,
   ping: () => ipcRenderer.invoke("ping"),
-
   // we can also expose variables, not just functions
 })
 
+contextBridge.exposeInMainWorld("app", {
+  version: pkg.version,
+})
+
 contextBridge.exposeInMainWorld("api", {
-  getQRCode: () => ipcRenderer.invoke("get:qrcode"),
-  getQRCodeStatus: () => ipcRenderer.invoke("get:qrcodeStatus"),
-  postQRCodeLogin: () => ipcRenderer.invoke("post:qrcodeLogin"),
-  signOut: () => ipcRenderer.invoke("sign-out"),
+  getQRCode: () => ipcRenderer.invoke(IPC_QRCODE_GET),
+  getQRCodeStatus: () => ipcRenderer.invoke(IPC_QRCODE_CHECK_STATUS),
+  signIn: () => ipcRenderer.invoke(IPC_AUTH_SIGN_IN_QRCODE),
+  signOut: () => ipcRenderer.invoke(IPC_AUTH_SIGN_OUT),
   getOtp: (serviceAccount: ServiceAccount) =>
-    ipcRenderer.invoke("get:otp", serviceAccount),
-  pinToken: () => ipcRenderer.invoke("get:pinToken"),
-  openExternal: (url: string) => ipcRenderer.invoke("openExternal", url),
+    ipcRenderer.invoke(IPC_AUTH_GET_OTP, serviceAccount),
+  pinToken: () => ipcRenderer.invoke(IPC_AUTH_PING_TOKEN),
+  openExternal: (url: string) =>
+    ipcRenderer.invoke(IPC_SYSTEM_OPEN_EXTERNAL, url),
 })
 
 contextBridge.exposeInMainWorld("win", {
-  info: () => ipcRenderer.send("window:info"),
-  minimize: () => ipcRenderer.send("window:minimize"),
-  maximize: () => ipcRenderer.send("window:maximize"),
-  close: () => ipcRenderer.send("window:close"),
+  info: () => ipcRenderer.send(IPC_WINDOW_INFO),
+  minimize: () => ipcRenderer.send(IPC_WINDOW_MINIMIZE),
+  maximize: () => ipcRenderer.send(IPC_WINDOW_MAXIMIZE),
+  close: () => ipcRenderer.send(IPC_WINDOW_CLOSE),
 })
 
 contextBridge.exposeInMainWorld("store", {
-  get: (key: string) => ipcRenderer.invoke("stroe:get", key),
+  get: (key: string) => ipcRenderer.invoke(IPC_STORE_GET, key),
   set: (key: string, value: unknown) =>
-    ipcRenderer.invoke("stroe:set", key, value),
+    ipcRenderer.invoke(IPC_STORE_SET, key, value),
 })

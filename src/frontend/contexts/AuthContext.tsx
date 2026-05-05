@@ -44,7 +44,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [accountList])
 
   async function signIn() {
-    const { error, data, message } = await window.api.postQRCodeLogin()
+    const { error, data, message } = await window.api.signIn()
     console.log("proccessLogin message: ", message, data)
     if (data) {
       setAccountList(data)

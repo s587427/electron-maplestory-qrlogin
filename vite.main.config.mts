@@ -1,3 +1,4 @@
+import path from "node:path"
 import { defineConfig } from "vite"
 
 // https://vitejs.dev/config
@@ -7,6 +8,9 @@ export default defineConfig({
     // For Node.js native modules
     conditions: ["node"], // this is the change
     mainFields: ["module", "jsnext:main", "jsnext"],
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
   },
   plugins: [
     {

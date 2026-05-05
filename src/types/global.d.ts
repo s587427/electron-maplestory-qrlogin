@@ -6,11 +6,14 @@ export {}
 // 定義全域型別
 declare global {
   interface Window {
+    app: {
+      version: string
+    }
     api: {
       getQRCode: () => Promise<IpcResponse<string | undefined>>
       getQRCodeStatus: () => Promise<IpcResponse<QRCodeStatus>>
-      postQRCodeLogin: () => Promise<IpcResponse<GetAccountsResult>>
       getOtp: (serviceAccount: ServiceAccount) => Promise<IpcResponse>
+      signIn: () => Promise<IpcResponse<GetAccountsResult>>
       signOut: () => Promise<IpcResponse<boolean>>
       pinToken: () => Promise<IpcResponse<string>>
       openExternal: (url: string) => Promise<void>

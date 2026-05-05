@@ -1,13 +1,12 @@
 import { app, BrowserWindow, Menu, nativeImage, Tray } from "electron"
 import started from "electron-squirrel-startup"
 import path from "node:path"
-import { registerIpcMains } from "./ipcMains"
+import { registerIpcs } from "./backend/ipcs"
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
   app.quit()
 }
-
 let mainWindow: BrowserWindow | null = null
 // save a reference to the Tray object globally to avoid garbage collection
 let tray: Tray | null = null
@@ -52,7 +51,7 @@ const createWindow = () => {
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   // register ipc
-  registerIpcMains()
+  registerIpcs()
   createWindow()
   createTray()
 })

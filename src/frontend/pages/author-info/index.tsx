@@ -13,7 +13,7 @@ export function AuthorInfoPage({ setIsShowAuthorInfo }: AuthorInfoProps) {
       <section className="author-info">
         <h2 className="author-info__title">Gama Play Login</h2>
         <div className="author-info__sub-title">
-          <p className="text-orange">Version 1.0.0</p>
+          <p className="text-orange">Version {window.app.version}</p>
           <p className="text-gray">By s587427．Sheng Yi</p>
         </div>
 
