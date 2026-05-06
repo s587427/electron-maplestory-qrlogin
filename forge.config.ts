@@ -11,7 +11,7 @@ const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
     icon: "./src/assets/icon",
-    extraResource: ["./src/assets"],
+    extraResource: ["./src/assets", "./node_modules/koffi"],
   },
   rebuildConfig: {},
   makers: [

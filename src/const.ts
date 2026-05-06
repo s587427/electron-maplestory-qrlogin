@@ -22,3 +22,20 @@ export const IPC_STORE_SET = "store:set"
 
 // system
 export const IPC_SYSTEM_OPEN_EXTERNAL = "system:open-external"
+export const IPC_SYSTEM_AUTO_LOGIN = "system:auto-login"
+
+export const STORE_PRE_SELECT_ACCOUNT_ID = "preSelectAccountId"
+export const STORE_IS_AUTO_FILL = "isAutoFill"
+
+export const VK = {
+  TAB: 0x09,
+  BACK: 0x08,
+  CONTROL: 0x11,
+  LCONTROL: 0xa2,
+  SHIFT: 0x10,
+  ALT: 0x12,
+  Enter: 0x0d,
+  V: 0x56,
+  C: 0x43,
+  A: 0x41,
+}

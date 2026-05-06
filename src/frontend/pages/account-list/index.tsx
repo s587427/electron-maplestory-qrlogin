@@ -1,4 +1,5 @@
 import { ServiceAccount } from "@/backend/services/auth"
+import { STORE_IS_AUTO_FILL, STORE_PRE_SELECT_ACCOUNT_ID } from "@/const"
 import { useAuth } from "@/frontend/contexts/AuthContext"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router"
@@ -67,8 +68,9 @@ export function AccountListPage() {
     }
 
     async function autoSelectAccount() {
-      const preSelectAccountId =
-        await window.store.get<string>("preSelectAccountId")
+      const preSelectAccountId = await window.store.get<string>(
+        STORE_PRE_SELECT_ACCOUNT_ID
+      )
       const account = accountList?.accountList.find(
         (account) => account.id === preSelectAccountId
       )
@@ -89,7 +91,9 @@ export function AccountListPage() {
 
         if (!error) {
           setOtp(data)
-          navigator.clipboard.writeText(data)
+          window.store.get(STORE_IS_AUTO_FILL)
+            ? window.api.autoLogin(selectedAccount.id, data)
+            : navigator.clipboard.writeText(data)
         } else {
           console.log("getOtpError: ", message)
           navigate("/")
@@ -108,7 +112,7 @@ export function AccountListPage() {
     isCopay: boolean = true
   ) {
     setSelectedAccount(account)
-    window.store.set("preSelectAccountId", account.id)
+    window.store.set(STORE_PRE_SELECT_ACCOUNT_ID, account.id)
     if (isCopay) navigator.clipboard.writeText(account.id)
   }
 

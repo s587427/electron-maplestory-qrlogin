@@ -17,6 +17,7 @@ declare global {
       signOut: () => Promise<IpcResponse<boolean>>
       pinToken: () => Promise<IpcResponse<string>>
       openExternal: (url: string) => Promise<void>
+      autoLogin: (account: string, password: string) => void
     }
     win: {
       info: () => void

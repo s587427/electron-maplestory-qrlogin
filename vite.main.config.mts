@@ -20,4 +20,10 @@ export default defineConfig({
       },
     },
   ],
+  build: {
+    rollupOptions: {
+      // 關鍵：告訴 Vite 不要打包 koffi，讓它在運行時直接從 node_modules 讀取
+      external: ["koffi"],
+    },
+  },
 })

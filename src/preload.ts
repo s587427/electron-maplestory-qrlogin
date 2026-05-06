@@ -13,6 +13,7 @@ import {
   IPC_QRCODE_GET,
   IPC_STORE_GET,
   IPC_STORE_SET,
+  IPC_SYSTEM_AUTO_LOGIN,
   IPC_SYSTEM_OPEN_EXTERNAL,
   IPC_WINDOW_CLOSE,
   IPC_WINDOW_INFO,
@@ -44,6 +45,8 @@ contextBridge.exposeInMainWorld("api", {
   pinToken: () => ipcRenderer.invoke(IPC_AUTH_PING_TOKEN),
   openExternal: (url: string) =>
     ipcRenderer.invoke(IPC_SYSTEM_OPEN_EXTERNAL, url),
+  autoLogin: (account: string, password: string) =>
+    ipcRenderer.send(IPC_SYSTEM_AUTO_LOGIN, account, password),
 })
 
 contextBridge.exposeInMainWorld("win", {
