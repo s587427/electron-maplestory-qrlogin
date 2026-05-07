@@ -65,7 +65,7 @@
 
   width: 213px;
   height: 28px;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
   padding: 7px 14px;
   border: 1px solid #999;
   border-radius: 14px;
@@ -77,13 +77,61 @@
   color: #000;
 }
 
-.account__password-btn {
+.account__password-controls {
+  width: 213px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.account__password-controls .autofill-groups {
+  app-region: no-drag;
+  position: relative;
+  display: block;
+  margin-inline: 4px;
+
+  font-size: 12px;
+  letter-spacing: 0.24px;
+}
+
+.autofill-groups input[type="checkbox"] {
+  app-region: no-drag;
+  height: 14px;
+  width: 14px;
+  margin-right: 4px;
+  border: none;
+  appearance: none;
+}
+
+.autofill-groups .checkbox-autofill {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 14px;
+  border-radius: 100%;
+  background-color: white;
+}
+
+.autofill-groups .checkbox-autofill::after {
+  position: absolute;
+  content: "";
+  inset: 2px;
+  border-radius: 100%;
+  background: white;
+}
+
+.autofill-groups input[type="checkbox"]:checked ~ .checkbox-autofill::after {
+  background: #ccc;
+}
+
+.account__password-controls .btn-otp {
   cursor: pointer;
   background-color: #ff9930;
   border: none;
   border-radius: 14px;
-  width: 213px;
-  height: 28px;
+  width: 130px;
+  height: 25px;
 
   font-size: 14px;
   font-weight: 400;

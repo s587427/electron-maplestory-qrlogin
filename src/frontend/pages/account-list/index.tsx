@@ -55,6 +55,8 @@ export function AccountListPage() {
   const [selectedAccount, setSelectedAccount] = useState<
     ServiceAccount | undefined
   >(undefined)
+
+  const [isAutoFill, setIsAutoFill] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [isShowDialogSignOut, setIsShowDialogSignOut] = useState<boolean>(false)
 
@@ -82,6 +84,10 @@ export function AccountListPage() {
     }
   }, [accountList])
 
+  useEffect(() => {
+    window.store.get(STORE_IS_AUTO_FILL).then(setIsAutoFill)
+  }, [])
+
   async function handleClickFetchOtp() {
     if (selectedAccount) {
       setIsLoading(true)
@@ -91,7 +97,7 @@ export function AccountListPage() {
 
         if (!error) {
           setOtp(data)
-          window.store.get(STORE_IS_AUTO_FILL)
+          isAutoFill
             ? window.api.autoLogin(selectedAccount.id, data)
             : navigator.clipboard.writeText(data)
         } else {
@@ -151,13 +157,28 @@ export function AccountListPage() {
             {otp}
           </div>
 
-          <button
-            className="account__password-btn btn btn-orange"
-            disabled={isLoading}
-            onClick={handleClickFetchOtp}
-          >
-            獲取密碼
-          </button>
+          <div className="account__password-controls">
+            <label className="autofill-groups" htmlFor="autofill">
+              <input
+                id="autofill"
+                type="checkbox"
+                checked={isAutoFill}
+                onChange={(e) => {
+                  window.store.set(STORE_IS_AUTO_FILL, e.target.checked)
+                  setIsAutoFill(e.target.checked)
+                }}
+              />
+              <span>自動輸入</span>
+              <div className="checkbox-autofill" />
+            </label>
+            <button
+              className="btn btn-orange btn-otp"
+              disabled={isLoading}
+              onClick={handleClickFetchOtp}
+            >
+              獲取密碼
+            </button>
+          </div>
         </>
       ) : (
         <div className="dialog signout-dialog">

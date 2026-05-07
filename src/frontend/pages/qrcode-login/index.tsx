@@ -20,7 +20,7 @@ export function QRCodeLoingPage() {
   const [deepLink, setDeepLink] = useState<string>("")
   const refreshImgSrc = "https://tw.newlogin.beanfun.com/images/refresh.png"
 
-  const [imgSrc, setImgSrc] = useState(refreshImgSrc)
+  const [imgSrc, setImgSrc] = useState(null)
   const { signIn } = useAuth()
 
   useEffect(() => {
@@ -104,7 +104,7 @@ export function QRCodeLoingPage() {
                 onClick={
                   qrcodeStatusState === -2 ? updateQRCodeImage : () => {}
                 }
-                disabled={isLoading}
+                disabled={isLoading || qrcodeStatusState !== -2}
               />
               <p>點擊刷新條碼</p>
             </div>
