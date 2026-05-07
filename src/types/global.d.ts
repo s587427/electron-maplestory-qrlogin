@@ -1,3 +1,4 @@
+import { InitLoginData } from "@/backend/ipcs/qrcode"
 import { GetAccountsResult, ServiceAccount } from "./backend/services/account"
 import { IpcResponse } from "./response"
 
@@ -10,7 +11,7 @@ declare global {
       version: string
     }
     api: {
-      getQRCode: () => Promise<IpcResponse<string | undefined>>
+      getQRCode: () => Promise<IpcResponse<InitLoginData>>
       getQRCodeStatus: () => Promise<IpcResponse<QRCodeStatus>>
       getOtp: (serviceAccount: ServiceAccount) => Promise<IpcResponse>
       signIn: () => Promise<IpcResponse<GetAccountsResult>>

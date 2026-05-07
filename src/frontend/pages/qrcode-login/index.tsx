@@ -17,6 +17,7 @@ export function QRCodeLoingPage() {
   const [isLoading, setIsloading] = useState<boolean>(false)
   const [qrcodeImage, setQRCodeImage] = useState<string>(null)
   const [qrcodeStatusState, setQRCodeStatusState] = useState<QRCodeStatus>(-1) // -1 default -2 expired  1 pass
+  const [deepLink, setDeepLink] = useState<string>("")
   const refreshImgSrc = "https://tw.newlogin.beanfun.com/images/refresh.png"
 
   const [imgSrc, setImgSrc] = useState(refreshImgSrc)
@@ -59,7 +60,7 @@ export function QRCodeLoingPage() {
       setQRCodeStatusState(qrcodeStatus as QRCodeStatus)
       console.log("qrcodeStatus: ", qrcodeStatus)
       timer = setTimeout(() => {
-        if (qrcodeStatus === -2) setImgSrc(refreshImgSrc)
+        // if (qrcodeStatus === -2) setImgSrc(refreshImgSrc)
         if (qrcodeStatus === -2 || qrcodeStatus === 1) return
         executeTimer()
       }, 2000)
@@ -78,9 +79,10 @@ export function QRCodeLoingPage() {
     setQRCodeStatusState(-1)
     setIsloading(true)
     try {
-      const { data: base64, error, message } = await window.api.getQRCode()
+      const { data, error, message } = await window.api.getQRCode()
       if (!error) {
-        setQRCodeImage(base64)
+        setQRCodeImage(data.qrImage)
+        setDeepLink(data.deepLink)
       } else {
         console.log("updateQRCodeImage error: ", message)
       }
@@ -93,21 +95,32 @@ export function QRCodeLoingPage() {
   return (
     <div className="qr-login">
       <h1 className="qr-login__title">Gama Play | Login</h1>
-      <img
-        className="qr-login__img"
-        src={imgSrc}
-        alt="qrcode"
-        onClick={qrcodeStatusState === -2 ? updateQRCodeImage : () => {}}
-      />
-      {qrcodeStatusState === -2 && (
-        <button
-          className="qr-login__refresh"
-          // onClick={updateQRCodeImage}
-          // disabled={isLoading}
-        >
-          點擊刷新條碼
-        </button>
-      )}
+
+      <div className="qr-login__qrcode">
+        <div className="qrcode-inner">
+          {isLoading || qrcodeStatusState === -2 ? (
+            <div className="qrcode-inner__refresh">
+              <button
+                onClick={
+                  qrcodeStatusState === -2 ? updateQRCodeImage : () => {}
+                }
+                disabled={isLoading}
+              />
+              <p>點擊刷新條碼</p>
+            </div>
+          ) : (
+            <img className="qrcode-inner__image" src={imgSrc} alt="qrcode" />
+          )}
+        </div>
+      </div>
+
+      <button
+        className="btn btn-orange"
+        disabled={qrcodeStatusState === -2 || qrcodeImage == null || isLoading}
+        onClick={() => navigator.clipboard.writeText(deepLink)}
+      >
+        複製Deeplink
+      </button>
     </div>
   )
 }

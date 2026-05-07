@@ -15,19 +15,56 @@
   letter-spacing: 1.2px;
 }
 
-.qr-login__img {
-  width: 179px;
-  height: 179px;
-  margin-bottom: 14px;
+.qr-login__qrcode {
+  width: 144px;
+  height: 144px;
+  padding: 8px;
+  background: #fff;
+  border-radius: 6px;
+  margin-bottom: 22px;
 }
 
-.qr-login__refresh {
-  cursor: default;
-  background-color: transparent;
+.qr-login__qrcode .qrcode-inner {
+  display: flex;
+  align-items: center;
+  background-color: #cecece;
+  height: 100%;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.qrcode-inner .qrcode-inner__refresh {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+.qrcode-inner__refresh button {
+  width: 44px;
+  height: 44px;
+  border-radius: 100%;
+  background-color: #fff;
+  background-image: url("@/frontend/assets/images/refresh-icon.png");
+  background-size: 18px;
+  background-position: center;
+  background-repeat: no-repeat;
   border: none;
+}
+
+.qrcode-inner__refresh p {
   color: #000;
-  font-size: 14px;
-  letter-spacing: 0.28px;
-  width: fit-content;
-  margin-inline: auto;
+  font-size: 12px;
+  line-height: normal;
+  letter-spacing: 0.24px;
+}
+
+.qrcode-inner .qrcode-inner__image {
+  width: 100%;
+  max-width: 100%;
+  transform: scale(1.32);
+  transform-origin: center;
+  border-radius: 4px;
 }
